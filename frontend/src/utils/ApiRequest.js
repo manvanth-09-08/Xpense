@@ -1,0 +1,12 @@
+const host = "http://localhost:8000";
+// const host = "http://localhost:5000";
+export const setAvatarAPI = `${host}/api/auth/setAvatar`;
+export const registerAPI = `${host}/api/auth/register`;
+export const loginAPI = `${host}/api/auth/login`;
+export const addNewBankAccount = `${host}/api/auth/addBankAccount`;
+export const deleteExistingAccount = `${host}/api/auth/deleteBankAccount`;
+export const getBankDetails = `${host}/api/auth/getBankDetails`;
+export const addTransaction = `${host}/api/v1/addTransaction`;
+export const getTransactions = `${host}/api/v1/getTransaction`;
+export const editTransactions = `${host}/api/v1/updateTransaction`;
+export const deleteTransactions = `${host}/api/v1/deleteTransaction`;
