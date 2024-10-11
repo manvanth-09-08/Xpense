@@ -56,8 +56,6 @@ app.get("/", (req, res) => {
 
 console.log("hehehehhehehehehehehhe")
 
-// app.listen(port, () => {
-//   console.log(`Server is listening on http://localhost:${port}`);
-// });
-
-export const handler = serverless(app); 
+app.listen(port, () => {
+  console.log(`Server is listening on http://localhost:${port}`);
+});
