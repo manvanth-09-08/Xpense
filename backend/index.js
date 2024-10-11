@@ -17,10 +17,8 @@ const port = process.env.PORT;
 connectDB();
 
 const allowedOrigins = [
-  // "https://main.d1sj7cd70hlter.amplifyapp.com",
-  // "https://expense-tracker-app-three-beryl.vercel.app",
-  // "http://localhost:3000"
-  '*'
+  'https://xpense-l4m1.vercel.app',
+  "localhost:3000",
   // add more origins as needed
 ];
 
@@ -28,7 +26,7 @@ const allowedOrigins = [
 app.use(express.json());
 app.use(
   cors({
-    origin: "*",
+    origin:allowedOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
