@@ -7,7 +7,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import transactionRoutes from "./Routers/Transactions.js";
 import userRoutes from "./Routers/userRouter.js";
-import path from "path";
+import serverless from "serverless-http";
 
 dotenv.config();
 const app = express();
@@ -56,6 +56,8 @@ app.get("/", (req, res) => {
 
 console.log("hehehehhehehehehehehhe")
 
-app.listen(port, () => {
-  console.log(`Server is listening on http://localhost:${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Server is listening on http://localhost:${port}`);
+// });
+
+export const handler = serverless(app); 
