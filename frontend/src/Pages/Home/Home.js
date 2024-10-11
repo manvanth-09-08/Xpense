@@ -17,6 +17,8 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import Analytics from "./Analytics";
 import Banks from "./Banks";
 import { getBankDetail } from "../../utils/FetchApi";
+import { Bank } from "../Bank/Bank";
+import { AddBankModal } from "./AddBankModal";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -45,6 +47,8 @@ const Home = () => {
   const [filterApplied,setFilterApplied] = useState(false)
   const [banks,setBanks] = useState(null);
   const [selectedBank,setSelectedBank] = useState(null)
+  const [bankShow,setBankShow] = useState(false);
+  const [showAddBankModal,setShowAddBankModal] = useState(false)
 
   const handleStartChange = (date) => {
     setStartDate(date);
@@ -53,6 +57,8 @@ const Home = () => {
   const handleEndChange = (date) => {
     setEndDate(date);
   };
+
+  const handleBankClose = () =>setBankShow(false)
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -76,7 +82,7 @@ const Home = () => {
 
   useEffect(()=>{
     fetchBanks();
-  },[show])
+  },[show, showAddBankModal,bankShow])
 
   useEffect(() => {
     const avatarFunc = async () => {
@@ -100,12 +106,21 @@ const Home = () => {
   const [values, setValues] = useState({
     title: "",
     amount: "",
-    description: "",
     category: "",
     date: "",
     transactionType: "",
     selectedBank :0,
   });
+
+  const handleAddNewBankAccount = ()=>{
+    
+    setShowAddBankModal(true);
+  }
+
+  const handleAddNewBankAccountClose = ()=>{
+    setRefresh(true);
+    setShowAddBankModal(false)
+  }
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -131,13 +146,12 @@ const Home = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { title, amount, description, category, date, selectedBank } =
+    const { title, amount, category, date, selectedBank } =
       values;
 
     if (
       !title ||
       !amount ||
-      !description ||
       !category ||
       !date||
       !selectedBank
@@ -149,7 +163,6 @@ const Home = () => {
     const { data } = await axios.post(addTransaction, {
       title: title,
       amount: amount,
-      description: description,
       category: category,
       date: date,
       transactionType: typeOfTransaction,
@@ -226,7 +239,7 @@ const Home = () => {
 
   return (
     <>
-      <Header />
+      <Header setBankShow={setBankShow} />
 
       {loading ? (
         <>
@@ -255,20 +268,7 @@ const Home = () => {
                 </Form.Group>
               </div>
 
-              <div className="text-white type">
-                <Form.Group className="mb-3" controlId="formSelectFrequency">
-                  <Form.Label>Type</Form.Label>
-                  <Form.Select
-                    name="type"
-                    value={type}
-                    onChange={handleSetType}
-                  >
-                    <option value="all">All</option>
-                    <option value="expense">Expense</option>
-                    <option value="credit">Earned</option>
-                  </Form.Select>
-                </Form.Group>
-              </div>
+              {/* <Bu> */}
               {console.log(filterApplied)}
               {filterApplied?(
                 
@@ -377,16 +377,7 @@ const Home = () => {
                         </Form.Select>
                       </Form.Group>
 
-                      <Form.Group className="mb-3" controlId="formDescription">
-                        <Form.Label>Description</Form.Label>
-                        <Form.Control
-                          type="text"
-                          name="description"
-                          placeholder="Enter Description"
-                          value={values.description}
-                          onChange={handleChange}
-                        />
-                      </Form.Group>
+
 
                       <Form.Group className="mb-3" controlId="formSelect1">
                         <Form.Label>Transaction Type : </Form.Label>
@@ -424,6 +415,20 @@ const Home = () => {
                     </Button>
                   </Modal.Footer>
                 </Modal>
+
+                <Modal show={bankShow} onHide={handleBankClose} centered>
+                <Modal.Header closeButton>
+                <div className="d-flex justify-content-between w-100 align-items-center">
+      <Modal.Title>Bank Details</Modal.Title>
+      <Button variant="success" onClick={handleAddNewBankAccount}>
+        Create New
+      </Button>
+    </div>
+                  </Modal.Header>
+                < Bank />
+                
+                </Modal>
+                <AddBankModal showAddBankModal={showAddBankModal} handleAddNewBankAccountClose={handleAddNewBankAccountClose} />
               </div>
             </div>
             <br style={{ color: "white" }}></br>
@@ -473,7 +478,8 @@ const Home = () => {
             
             {view === "table" ? (
               <>
-              <Banks></Banks>
+              {console.log("hehehe")}
+              <Banks banks={banks}></Banks>
                 <TableData data={transactions} user={cUser} />
               </>
             ) : (

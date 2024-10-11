@@ -18,7 +18,7 @@ connectDB();
 
 const allowedOrigins = [
   'https://xpense-l4m1.vercel.app',
-  "localhost:3000",
+  "http://localhost:3000",
   // add more origins as needed
 ];
 

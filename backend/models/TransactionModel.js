@@ -21,11 +21,6 @@ const transactionSchema = new mongoose.Schema({
         
     },
 
-    description: {
-        type: String,
-        required: [true, "Description is required"],
-        
-    },
     transactionType: {
         type: String,
         required: [true, "Transaction Type is required"],
@@ -45,6 +40,10 @@ const transactionSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: new Date(),
+    },
+
+    bankName:{
+        type:String,
     }
 
 });

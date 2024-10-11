@@ -7,7 +7,6 @@ export const addTransactionController = async (req, res) => {
     const {
       title,
       amount,
-      description,
       date,
       category,
       userId,
@@ -15,12 +14,11 @@ export const addTransactionController = async (req, res) => {
       index,
     } = req.body;
 
-    console.log("transsss : ",title, amount, description, date, category, userId, transactionType,index);
+    console.log("transsss : ",title, amount, date, category, userId, transactionType,index);
 
     if (
       !title ||
       !amount ||
-      !description ||
       !date ||
       !category ||
       !transactionType||
@@ -51,10 +49,10 @@ export const addTransactionController = async (req, res) => {
       title: title,
       amount: amount,
       category: category,
-      description: description,
       date: date,
       user: userId,
       transactionType: transactionType,
+      bankName:bankName,
     });
 
     user.transactions.push(newTransaction);

@@ -5,7 +5,7 @@ import "./style.css";
 import { useNavigate } from 'react-router-dom';
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
-const Header = () => {
+const Header = ({setBankShow}) => {
   
 const navigate = useNavigate();
 
@@ -132,6 +132,12 @@ const navigate = useNavigate();
         <Navbar.Collapse id="responsive-navbar-nav" style={{color: "white"}}>
           {user ? (
             <>
+            <Nav>
+              <Button variant="outline-light" onClick={()=>setBankShow(true)}>Banks</Button>
+            </Nav>
+            <Nav>
+              <Button variant="outline-light">Categoies</Button>
+            </Nav>
             <Nav>
                 <Button variant="danger" color="error" onClick={handleShowLogout} className="ml-2">Logout</Button>
               </Nav>

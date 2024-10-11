@@ -51,3 +51,4 @@ export const getBankDetail = async(email)=>{
         return err.response.data
     }
 }
+

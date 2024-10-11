@@ -6,6 +6,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import "./home.css";
 import { deleteTransactions, editTransactions } from "../../utils/ApiRequest";
 import axios from "axios";
+import "./TableData.css"
 
 const TableData = (props) => {
   const [show, setShow] = useState(false);
@@ -15,6 +16,13 @@ const TableData = (props) => {
   const [currId, setCurrId] = useState(null);
   const [refresh, setRefresh] = useState(false);
   const [user, setUser] = useState(null);
+  const [type, setType] = useState(null)
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [banks, setBanks] = useState(null)
+
+  const [typeFilter, setTypeFilter] = useState(false);
+  const [bankFilter, setBankFilter] = useState(false);
+
 
   const handleEditClick = (itemKey) => {
     // const buttonId = e.target.id;
@@ -30,17 +38,17 @@ const TableData = (props) => {
   const handleEditSubmit = async (e) => {
     // e.preventDefault();
 
-    const {data} = await axios.put(`${editTransactions}/${currId}`, {
+    const { data } = await axios.put(`${editTransactions}/${currId}`, {
       ...values,
     });
 
-    if(data.success === true){
+    if (data.success === true) {
 
       await handleClose();
       await setRefresh(!refresh);
       window.location.reload();
     }
-    else{
+    else {
       console.log("error");
     }
 
@@ -50,15 +58,15 @@ const TableData = (props) => {
     console.log(user._id);
     console.log("Clicked button ID delete:", itemKey);
     setCurrId(itemKey);
-    const {data} = await axios.post(`${deleteTransactions}/${itemKey}`,{
+    const { data } = await axios.post(`${deleteTransactions}/${itemKey}`, {
       userId: props.user._id,
     });
 
-    if(data.success === true){
+    if (data.success === true) {
       await setRefresh(!refresh);
       window.location.reload();
     }
-    else{
+    else {
       console.log("error");
     }
 
@@ -84,10 +92,58 @@ const TableData = (props) => {
     setShow(true);
   };
 
+  const handleSorting = (param, direction) => {
+    setType(direction);
+    const sortedData = [...transactions].sort((a, b) => {
+      if (a[param] < b[param]) {
+        return direction === 'ascending' ? -1 : 1;
+      }
+      if (a[param] > b[param]) {
+        return direction === 'ascending' ? 1 : -1;
+      }
+      return 0;
+    });
+    setTransactions([...sortedData]);
+    setRefreshKey(refreshKey + 1);
+
+  }
+
+  const handleTypeChange = (type) => {
+    setTypeFilter(true)
+    const selectedTransaction = props.data.filter((transaction) => transaction.transactionType === type);
+    setTransactions(selectedTransaction);
+  }
+
+  const handleClearTypeFilter = ()=>{
+    setTransactions(props.data)
+    setTypeFilter(false)
+  }
+
+  const handleBankAccount = (bank) => {
+    setBankFilter(true);
+    const selectedTransaction = props.data.filter((transaction) => transaction.bankName === bank);
+    setTransactions(selectedTransaction);
+  }
+
+  const handleClearBankFilter = ()=>{
+    setTransactions(props.data);
+    setBankFilter(false)
+  }
+
+  useEffect(() => {
+    console.log("after sorting ----> ", transactions);
+  }, [transactions]); // This will log when the `transactions` state chang
+
+  const setBankAccounts = () => {
+    const banks = props.user && props.user.bankAccount && props.user.bankAccount.map((bank) => { return bank.bankName });
+    setBanks(banks);
+  }
+
   useEffect(() => {
     setUser(props.user);
     setTransactions(props.data);
-  }, [props.data,props.user, refresh]);
+    setBankAccounts();
+  }, [props.data, props.user, refresh]);
 
   return (
     <>
@@ -95,21 +151,84 @@ const TableData = (props) => {
         <Table responsive="md" className="data-table">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Title</th>
-              <th>Amount</th>
-              <th>Type</th>
-              <th>Category</th>
-              <th>Action</th>
+              <th><div className="dropdown">
+                <button className="dropbtn"><th>Date</th></button>
+                <div className="dropdown-content">
+                  <a onClick={() => { handleSorting('date', 'ascending') }}>Sort Ascending</a>
+                  <a onClick={() => { handleSorting('date', 'descending') }}>Sort Descending</a>
+                </div>
+              </div></th>
+              <th><div className="dropdown">
+                <button className="dropbtn"><th>Title</th></button>
+                <div className="dropdown-content">
+                  <a onClick={() => { handleSorting('title', 'ascending') }}>Sort Ascending</a>
+                  <a onClick={() => { handleSorting('title', 'descending') }}>Sort Descending</a>
+                </div>
+              </div></th>
+              <th><div className="dropdown">
+                <button className="dropbtn"><th>Amount</th></button>
+                <div className="dropdown-content">
+                  <a onClick={() => { handleSorting('amount', 'ascending') }}>Sort Ascending</a>
+                  <a onClick={() => { handleSorting('amount', 'descending') }}>Sort Descending</a>
+                </div>
+              </div></th>
+              <th>
+              <div className="dropdown">
+  <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}>
+    <th>Type</th>
+    {typeFilter && (
+      <span 
+        onClick={() => handleClearTypeFilter()} 
+        style={{ marginLeft: '8px', cursor: 'pointer', color: 'red' }}
+      >
+        X {/* or <i className="fas fa-times"></i> for an icon */}
+      </span>
+    )}
+  </button>
+  <div className="dropdown-content">
+    <a onClick={() => handleTypeChange('Credit')}>Credit</a>
+    <a onClick={() => handleTypeChange('Expense')}>Expense</a>
+  </div>
+</div>
+
+              </th>
+              <th><div className="dropdown">
+                <button className="dropbtn"  style={{ display: 'flex', alignItems: 'center' }}><th>Bank Acc</th>
+                {bankFilter && (
+      <span 
+        onClick={() => handleClearBankFilter()} 
+        style={{ marginLeft: '8px', cursor: 'pointer', color: 'red' }}
+      >
+        X {/* or <i className="fas fa-times"></i> for an icon */}
+      </span>
+    )}</button>
+                <div className="dropdown-content">
+                  {banks && banks.map((bank) => { return <a onClick={() => { handleBankAccount(bank) }}>{bank}</a> })}
+
+                </div>
+              </div></th>
+              <th><div className="dropdown">
+                <button className="dropbtn"><th>Category</th></button>
+                <div className="dropdown-content">
+                  <a href="#">Sort Ascending</a>
+                  <a href="#">Sort Descending</a>
+                  <a href="#">Filter by Type</a>
+                </div>
+              </div></th>
+              <th><div className="dropdown">
+                <button className="dropbtn" disabled><th>Action</th></button>
+
+              </div></th>
             </tr>
           </thead>
           <tbody className="text-white">
-            {props.data.map((item, index) => (
+            {transactions && transactions.map((item, index) => (
               <tr key={index}>
                 <td>{moment(item.date).format("YYYY-MM-DD")}</td>
                 <td>{item.title}</td>
                 <td>{item.amount}</td>
                 <td>{item.transactionType}</td>
+                <td>{item.bankName || ""}</td>
                 <td>{item.category}</td>
                 <td>
                   <div className="icons-handle">
@@ -194,19 +313,6 @@ const TableData = (props) => {
                                   </Form.Select>
                                 </Form.Group>
 
-                                <Form.Group
-                                  className="mb-3"
-                                  controlId="formDescription"
-                                >
-                                  <Form.Label>Description</Form.Label>
-                                  <Form.Control
-                                    type="text"
-                                    name="description"
-                                    placeholder={editingTransaction[0].description}
-                                    value={values.description}
-                                    onChange={handleChange}
-                                  />
-                                </Form.Group>
 
                                 <Form.Group
                                   className="mb-3"
