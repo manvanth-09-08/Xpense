@@ -160,6 +160,17 @@ const Home = () => {
     handleResetButtonVisibility()
   };
 
+  const setBankAndCategories = async ()=>{
+    const responseData = await getBankDetail(cUser.email);
+    const user = {
+      ...cUser,
+      bankAccount: responseData.bankDetaile,
+      categories: responseData.categories,
+    }
+    console.log("use : ------> ", user);
+    localStorage.setItem("user", JSON.stringify(user))
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -176,36 +187,40 @@ const Home = () => {
       toast.error("Please enter all the fields", toastOptions);
     }
     setLoading(true);
-
-    const { data } = await axios.post(addTransaction, {
-      title: title,
-      amount: amount,
-      category: category,
-      date: date,
-      transactionType: typeOfTransaction,
-      userId: cUser._id,
-      index: selectedBank,
-    });
-
-    if (data.success === true) {
-      toast.success(data.message, toastOptions);
-      handleClose();
-      fetchAllTransactions();
-      setRefresh(!refresh);
-    } else {
-      toast.error(data.message, toastOptions);
+    try{
+      const { data } = await axios.post(addTransaction, {
+        title: title,
+        amount: amount,
+        category: category,
+        date: date,
+        transactionType: typeOfTransaction,
+        userId: cUser._id,
+        index: selectedBank,
+      });
+  
+      if (data.success === true) {
+        toast.success(data.message, toastOptions);
+        handleClose();
+        fetchAllTransactions();
+        setRefresh(!refresh);
     }
-
-    const responseData = await getBankDetail(cUser.email);
-    const user = {
-      ...cUser,
-      bankAccount: responseData.bankDetaile,
-    }
-    console.log("use : ------> ", user);
-    localStorage.setItem("user", JSON.stringify(user))
+    await setBankAndCategories();
+    
+    
 
 
     setLoading(false);
+    
+    } catch(err){
+      
+     
+      console.log(err)
+      setLoading(false);
+      toast.error(err.response.data.message, toastOptions);
+    
+  }
+
+    
   };
 
   const handleReset = () => {
@@ -232,9 +247,10 @@ const Home = () => {
       setTransactions(data.transactions);
       // let category = ;
       // category = category.categories
+      await setBankAndCategories();
       setCategories(JSON.parse(localStorage.getItem("user")).categories);
       console.log("categorye : ",categories)
-
+      
       setLoading(false);
     } catch (err) {
       // toast.error("Error please Try again...", toastOptions);

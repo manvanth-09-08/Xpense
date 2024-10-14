@@ -214,7 +214,7 @@ export const getBankDetails = async (req, res) => {
             });
         }
 
-        return res.status(200).json({ success: true, message: "Bank details fetched", bankDetaile: user.bankAccount })
+        return res.status(200).json({ success: true, message: "Bank details fetched", bankDetaile: user.bankAccount , categories : user.categories})
 
     } catch (err) {
         return res.status(500).json({ success: false, message: "Internal server error" })
