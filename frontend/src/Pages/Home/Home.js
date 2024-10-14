@@ -383,7 +383,7 @@ const Home = () => {
                           onChange={handleChange}
                         >
                           {console.log("categorye : ",categories)}
-                          <option value="">{categories.length===0?"No categories found, please add":""}</option>
+                          <option value="">{categories&& categories.length===0?"No categories found, please add":""}</option>
                         {categories?categories.map((category,index)=>{
                           {console.log(category.category)}
                           return (<option key={index} value={category.category}>{category.category}</option>)
