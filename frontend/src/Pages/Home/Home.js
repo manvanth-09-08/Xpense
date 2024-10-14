@@ -19,6 +19,8 @@ import Banks from "./Banks";
 import { getBankDetail } from "../../utils/FetchApi";
 import { Bank } from "../Bank/Bank";
 import { AddBankModal } from "./AddBankModal";
+import { Category } from "../Bank/Category";
+import  {AddCategoryModal}  from "./AddCategoryModal";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -43,12 +45,15 @@ const Home = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [view, setView] = useState("table");
-  const [typeOfTransaction,setTypeOfTransaction] = useState(null);
-  const [filterApplied,setFilterApplied] = useState(false)
-  const [banks,setBanks] = useState(null);
-  const [selectedBank,setSelectedBank] = useState(null)
-  const [bankShow,setBankShow] = useState(false);
-  const [showAddBankModal,setShowAddBankModal] = useState(false)
+  const [typeOfTransaction, setTypeOfTransaction] = useState(null);
+  const [filterApplied, setFilterApplied] = useState(false)
+  const [banks, setBanks] = useState(null);
+  const [selectedBank, setSelectedBank] = useState(null)
+  const [bankShow, setBankShow] = useState(false);
+  const [showAddBankModal, setShowAddBankModal] = useState(false)
+  const [categoryShow, setCategoryShow] = useState(false);
+  const [addCategoryShow, setAddCategoryShow] = useState(false);
+  const [categories,setCategories] = useState(null);
 
   const handleStartChange = (date) => {
     setStartDate(date);
@@ -58,31 +63,31 @@ const Home = () => {
     setEndDate(date);
   };
 
-  const handleBankClose = () =>setBankShow(false)
+  const handleBankClose = () => setBankShow(false)
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const handleAddExpense = () =>{
+  const handleAddExpense = () => {
     setTypeOfTransaction("Expense")
     handleShow();
   }
 
-  const handleAddIncome = () =>{
+  const handleAddIncome = () => {
     setTypeOfTransaction("Credit")
     handleShow();
   }
 
-  const fetchBanks = ()=>{
-    if(localStorage.getItem("user")){
-    const user = JSON.parse(localStorage.getItem("user"));
-    setBanks(user.bankAccount)
+  const fetchBanks = () => {
+    if (localStorage.getItem("user")) {
+      const user = JSON.parse(localStorage.getItem("user"));
+      setBanks(user.bankAccount)
     }
-}
+  }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchBanks();
-  },[show, showAddBankModal,bankShow])
+  }, [show, showAddBankModal, bankShow])
 
   useEffect(() => {
     const avatarFunc = async () => {
@@ -109,31 +114,43 @@ const Home = () => {
     category: "",
     date: "",
     transactionType: "",
-    selectedBank :0,
+    selectedBank: 0,
   });
 
-  const handleAddNewBankAccount = ()=>{
-    
+  const handleAddNewBankAccount = () => {
+
     setShowAddBankModal(true);
   }
 
-  const handleAddNewBankAccountClose = ()=>{
+  const handleAddNewBankAccountClose = () => {
     setRefresh(true);
     setShowAddBankModal(false)
   }
 
+  const handleCategoryClose = () =>{
+    setCategoryShow(false);
+  }
+
+  const handleAddNewCategory = ()=>{
+    setAddCategoryShow(true);
+  }
+
+  const handleAddNewCategoryClose = ()=>{
+    setAddCategoryShow(false);
+  }
+
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
-    console.log(e.target.value,values)
+    console.log(e.target.value, values)
   };
 
-  const handleResetButtonVisibility = ()=>{
-    if(type==="all" && frequency==="7" )
+  const handleResetButtonVisibility = () => {
+    if (type === "all" && frequency === "7")
       setFilterApplied(true)
     else
       setFilterApplied(false)
   }
-  const handleChangeFrequency = (e) => {    
+  const handleChangeFrequency = (e) => {
     setFrequency(e.target.value);
     handleResetButtonVisibility()
   };
@@ -153,7 +170,7 @@ const Home = () => {
       !title ||
       !amount ||
       !category ||
-      !date||
+      !date ||
       !selectedBank
     ) {
       toast.error("Please enter all the fields", toastOptions);
@@ -167,7 +184,7 @@ const Home = () => {
       date: date,
       transactionType: typeOfTransaction,
       userId: cUser._id,
-      index : selectedBank,
+      index: selectedBank,
     });
 
     if (data.success === true) {
@@ -177,15 +194,15 @@ const Home = () => {
     } else {
       toast.error(data.message, toastOptions);
     }
-    
+
     const responseData = await getBankDetail(cUser.email);
     const user = {
       ...cUser,
-      bankAccount : responseData.bankDetaile,
+      bankAccount: responseData.bankDetaile,
     }
-    console.log("use : ------> ",user);
-    localStorage.setItem("user",JSON.stringify(user))
-    
+    console.log("use : ------> ", user);
+    localStorage.setItem("user", JSON.stringify(user))
+
 
     setLoading(false);
   };
@@ -199,7 +216,7 @@ const Home = () => {
   };
 
 
-  
+
 
 
   useEffect(() => {
@@ -216,9 +233,13 @@ const Home = () => {
           type: type,
         });
         console.log(data);
-  
+
         setTransactions(data.transactions);
-  
+        // let category = ;
+        // category = category.categories
+        setCategories(JSON.parse(localStorage.getItem("user")).categories);
+        console.log("categorye : ",categories)
+
         setLoading(false);
       } catch (err) {
         // toast.error("Error please Try again...", toastOptions);
@@ -227,7 +248,7 @@ const Home = () => {
     };
 
     fetchAllTransactions();
-  }, [refresh, frequency, endDate, type, startDate]);
+  }, [refresh, frequency, endDate, type, startDate, categoryShow, bankShow]);
 
   const handleTableClick = (e) => {
     setView("table");
@@ -239,7 +260,7 @@ const Home = () => {
 
   return (
     <>
-      <Header setBankShow={setBankShow} />
+      <Header setBankShow={setBankShow} setCategoryShow={setCategoryShow} />
 
       {loading ? (
         <>
@@ -270,42 +291,40 @@ const Home = () => {
 
               {/* <Bu> */}
               {console.log(filterApplied)}
-              {filterApplied?(
-                
+              {filterApplied ? (
+
                 <div className="text-white">
-             
-                <Button variant="primary" onClick={handleReset}>
-                  Reset Filter
-                </Button>
-              </div>
-              ):""}
-              
+
+                  <Button variant="primary" onClick={handleReset}>
+                    Reset Filter
+                  </Button>
+                </div>
+              ) : ""}
+
 
               <div className="text-white iconBtnBox">
                 <FormatListBulletedIcon
                   sx={{ cursor: "pointer" }}
                   onClick={handleTableClick}
-                  className={`${
-                    view === "table" ? "iconActive" : "iconDeactive"
-                  }`}
+                  className={`${view === "table" ? "iconActive" : "iconDeactive"
+                    }`}
                 />
                 <BarChartIcon
                   sx={{ cursor: "pointer" }}
                   onClick={handleChartClick}
-                  className={`${
-                    view === "chart" ? "iconActive" : "iconDeactive"
-                  }`}
+                  className={`${view === "chart" ? "iconActive" : "iconDeactive"
+                    }`}
                 />
               </div>
 
               <div>
                 <div className="addButtons">
-              <Button onClick={handleAddIncome} className="addNew" variant="success">
-                  Add Income
-                </Button>
-                <Button onClick={handleAddExpense} className="addNew" variant="danger">
-                  Add Expense
-                </Button>
+                  <Button onClick={handleAddIncome} className="addNew" variant="success">
+                    Add Income
+                  </Button>
+                  <Button onClick={handleAddExpense} className="addNew" variant="danger">
+                    Add Expense
+                  </Button>
                 </div>
                 <Button onClick={handleShow} className="mobileBtn">
                   +
@@ -349,7 +368,7 @@ const Home = () => {
                           onChange={handleChange}
                         >
                           {
-                            banks && banks.map((bank,index)=>{
+                            banks && banks.map((bank, index) => {
                               return <option value={index}>{bank.bankName}</option>
                             })
                           }
@@ -363,17 +382,12 @@ const Home = () => {
                           value={values.category}
                           onChange={handleChange}
                         >
-                          <option value="">Choose...</option>
-                          <option value="Groceries">Groceries</option>
-                          <option value="Rent">Rent</option>
-                          <option value="Salary">Salary</option>
-                          <option value="Tip">Tip</option>
-                          <option value="Food">Food</option>
-                          <option value="Medical">Medical</option>
-                          <option value="Utilities">Utilities</option>
-                          <option value="Entertainment">Entertainment</option>
-                          <option value="Transportation">Transportation</option>
-                          <option value="Other">Other</option>
+                          {console.log("categorye : ",categories)}
+                          <option value="">{categories.length===0?"No categories found, please add":""}</option>
+                        {categories?categories.map((category,index)=>{
+                          {console.log(category.category)}
+                          return (<option key={index} value={category.category}>{category.category}</option>)
+                        }):""}
                         </Form.Select>
                       </Form.Group>
 
@@ -417,18 +431,32 @@ const Home = () => {
                 </Modal>
 
                 <Modal show={bankShow} onHide={handleBankClose} centered>
-                <Modal.Header closeButton>
-                <div className="d-flex justify-content-between w-100 align-items-center">
-      <Modal.Title>Bank Details</Modal.Title>
-      <Button variant="success" onClick={handleAddNewBankAccount}>
-        Create New
-      </Button>
-    </div>
+                  <Modal.Header closeButton>
+                    <div className="d-flex justify-content-between w-100 align-items-center">
+                      <Modal.Title>Bank Details</Modal.Title>
+                      <Button variant="success" onClick={handleAddNewBankAccount}>
+                        Create New
+                      </Button>
+                    </div>
                   </Modal.Header>
-                < Bank />
-                
+                  < Bank />
+
                 </Modal>
                 <AddBankModal showAddBankModal={showAddBankModal} handleAddNewBankAccountClose={handleAddNewBankAccountClose} />
+              {console.log("category ----> ",categoryShow)}
+              <Modal show = {categoryShow} onHide={handleCategoryClose} centered>
+              
+              <Modal.Header closeButton>
+                    <div className="d-flex justify-content-between w-100 align-items-center">
+                      <Modal.Title>Category Details</Modal.Title>
+                      <Button variant="success" onClick={handleAddNewCategory}>
+                        Create New
+                      </Button>
+                    </div>
+                  </Modal.Header>
+                  <Category></Category>
+                  <AddCategoryModal addCategoryShow={addCategoryShow}  handleAddNewCategory={handleAddNewCategoryClose} />
+              </Modal>
               </div>
             </div>
             <br style={{ color: "white" }}></br>
@@ -475,11 +503,11 @@ const Home = () => {
 
 
 
-            
+
             {view === "table" ? (
               <>
-              {console.log("hehehe")}
-              <Banks banks={banks}></Banks>
+                {console.log("hehehe")}
+                <Banks banks={banks}></Banks>
                 <TableData data={transactions} user={cUser} />
               </>
             ) : (

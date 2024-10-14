@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Container, Table } from "react-bootstrap";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { deleteBankAccount } from "../../utils/FetchApi";
+import { deleteCategory } from "../../utils/FetchApi";
 import { ToastContainer, toast } from "react-toastify";
 
-export const Bank =()=>{
-    const [banks,setBanks] = useState(null);
+export const Category =()=>{
+    const [categories,setCategories] = useState(null);
     const [email,setEmail] = useState(null)
 
     const toastOptions = {
@@ -20,17 +20,17 @@ export const Bank =()=>{
         theme: "dark",
       };
 
-    const handleDeleteBank = async(bankName,bankBalance,index)=>{
+    const handleDeleteCategory = async(category,index)=>{
         try{
-            console.log(email,bankName,bankBalance,index)
-            const responseData = await deleteBankAccount(email,bankName,bankBalance,index)
+            console.log(email,category,index)
+            const responseData = await deleteCategory(email,category,index)
             if(responseData.success){
                 const user = JSON.parse(localStorage.getItem("user"));
-                let bankAccount = user.bankAccount;
-                bankAccount.splice( index,1)
-                const userAux = {...user, bankAccount : bankAccount}
+                let categories = user.categories;
+                categories.splice( index,1)
+                const userAux = {...user, categories : categories}
                 localStorage.setItem("user",JSON.stringify(userAux));
-                setBanks(bankAccount);
+                setCategories(categories);
                 toast.success(responseData.message, toastOptions);
             }else{
                 toast.error(responseData.message, toastOptions);
@@ -43,8 +43,8 @@ export const Bank =()=>{
 
     useEffect(()=>{
         const user = JSON.parse(localStorage.getItem("user"));
-        console.log(user.bankAccount)
-        setBanks(user.bankAccount);
+        console.log(user.categories)
+        setCategories(user.categories);
         setEmail(user.email);
     },[localStorage.getItem("user")])
 
@@ -53,17 +53,15 @@ export const Bank =()=>{
             <Table responsive="md" className="data-table">
                 <thead>
                     <tr>
-                        <td>Name</td>
-                        <td>Balance</td>
+                        <td>Category Name</td>
                         <td>Action</td>
                     </tr>
                 </thead>
                 <tbody>
-                    {console.log(banks)}
-                    {banks && banks.map((bank,index)=> { 
+                    {categories && categories.map((category,index)=> { 
                         return (<tr key={index}>
-                            <td>{bank.bankName}</td>
-                            <td>{bank.accountBalance}</td>
+                            <td>{category.category}</td>
+                            {/* <td>{bank.accountBalance}</td> */}
                             <td>
                   <div className="icons-handle">
                     <EditNoteIcon
@@ -77,7 +75,7 @@ export const Bank =()=>{
                       sx={{ color: "red", cursor: "pointer" }}
                       key={index}
                     //   id={item._id}
-                      onClick={() => handleDeleteBank(bank.bankName,bank.accountBalance,index)}
+                      onClick={() => handleDeleteCategory(category.category,index)}
                     />
                     </div>
                     </td>

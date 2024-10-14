@@ -40,7 +40,11 @@ const userSchema = new mongoose.Schema({
 
     bankAccount:{
         type:[],
-    }   
+    },
+    
+    categories : {
+        type:[],
+    }
 
 });
 
