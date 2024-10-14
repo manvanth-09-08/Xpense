@@ -18,10 +18,12 @@ const TableData = (props) => {
   const [user, setUser] = useState(null);
   const [type, setType] = useState(null)
   const [refreshKey, setRefreshKey] = useState(0);
-  const [banks, setBanks] = useState(null)
+  const [bankUniqueValues, setBankUniqueValues] = useState(null)
+  const [categoryUniqueValues, setCategoryUniqueValues] = useState(null)
 
   const [typeFilter, setTypeFilter] = useState(false);
   const [bankFilter, setBankFilter] = useState(false);
+  const [categoryFilter,setCategoryFilter] = useState(false);
 
 
   const handleEditClick = (itemKey) => {
@@ -44,8 +46,8 @@ const TableData = (props) => {
 
     if (data.success === true) {
 
-      await handleClose();
-      await setRefresh(!refresh);
+       handleClose();
+       setRefresh(!refresh);
       window.location.reload();
     }
     else {
@@ -114,7 +116,7 @@ const TableData = (props) => {
     setTransactions(selectedTransaction);
   }
 
-  const handleClearTypeFilter = ()=>{
+  const handleClearTypeFilter = () => {
     setTransactions(props.data)
     setTypeFilter(false)
   }
@@ -125,9 +127,20 @@ const TableData = (props) => {
     setTransactions(selectedTransaction);
   }
 
-  const handleClearBankFilter = ()=>{
+  const handleClearBankFilter = () => {
     setTransactions(props.data);
     setBankFilter(false)
+  }
+
+  const handleCategoryFilter = (category)=>{
+    setCategoryFilter(true);
+    const filteredCategories = props.data.filter((transaction) => transaction.category === category)
+    setTransactions(filteredCategories);
+  }
+
+  const handleClearCategoryFilter = ()=>{
+    setTransactions(props.data);
+    setCategoryFilter(false);
   }
 
   useEffect(() => {
@@ -135,14 +148,24 @@ const TableData = (props) => {
   }, [transactions]); // This will log when the `transactions` state chang
 
   const setBankAccounts = () => {
-    const banks = props.user && props.user.bankAccount && props.user.bankAccount.map((bank) => { return bank.bankName });
-    setBanks(banks);
+    console.log("props : ",props)
+ 
+    let banks = props.data  && props.data.map((bank) => { return bank.bankName });
+    banks= Array.from(new Set(banks))
+    setBankUniqueValues(banks);
+  }
+
+  const setCategoriesForFilter = ()=>{
+    let categories = props.data  && props.data.map((category) => { return category.category });
+    categories= Array.from(new Set(categories))
+    setCategoryUniqueValues(categories);
   }
 
   useEffect(() => {
     setUser(props.user);
     setTransactions(props.data);
     setBankAccounts();
+    setCategoriesForFilter();
   }, [props.data, props.user, refresh]);
 
   return (
@@ -173,46 +196,54 @@ const TableData = (props) => {
                 </div>
               </div></th>
               <th>
-              <div className="dropdown">
-  <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}>
-    <th>Type</th>
-    {typeFilter && (
-      <span 
-        onClick={() => handleClearTypeFilter()} 
-        style={{ marginLeft: '8px', cursor: 'pointer', color: 'red' }}
-      >
-        X {/* or <i className="fas fa-times"></i> for an icon */}
-      </span>
-    )}
-  </button>
-  <div className="dropdown-content">
-    <a onClick={() => handleTypeChange('Credit')}>Credit</a>
-    <a onClick={() => handleTypeChange('Expense')}>Expense</a>
-  </div>
-</div>
+                <div className="dropdown">
+                  <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}>
+                    <th>Type</th>
+                    {typeFilter && (
+                      <span
+                        onClick={() => handleClearTypeFilter()}
+                        style={{ marginLeft: '8px', cursor: 'pointer', color: 'red' }}
+                      >
+                        X {/* or <i className="fas fa-times"></i> for an icon */}
+                      </span>
+                    )}
+                  </button>
+                  <div className="dropdown-content">
+                    <a onClick={() => handleTypeChange('Credit')}>Credit</a>
+                    <a onClick={() => handleTypeChange('Expense')}>Expense</a>
+                  </div>
+                </div>
 
               </th>
               <th><div className="dropdown">
-                <button className="dropbtn"  style={{ display: 'flex', alignItems: 'center' }}><th>Bank Acc</th>
-                {bankFilter && (
-      <span 
-        onClick={() => handleClearBankFilter()} 
-        style={{ marginLeft: '8px', cursor: 'pointer', color: 'red' }}
-      >
-        X {/* or <i className="fas fa-times"></i> for an icon */}
-      </span>
-    )}</button>
+                <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}><th>Bank Acc</th>
+                  {bankFilter && (
+                    <span
+                      onClick={() => handleClearBankFilter()}
+                      style={{ marginLeft: '8px', cursor: 'pointer', color: 'red' }}
+                    >
+                      X {/* or <i className="fas fa-times"></i> for an icon */}
+                    </span>
+                  )}</button>
                 <div className="dropdown-content">
-                  {banks && banks.map((bank) => { return <a onClick={() => { handleBankAccount(bank) }}>{bank}</a> })}
+                  {bankUniqueValues && bankUniqueValues.map((bank) => { return <a onClick={() => { handleBankAccount(bank) }}>{bank}</a> })}
 
                 </div>
               </div></th>
               <th><div className="dropdown">
-                <button className="dropbtn"><th>Category</th></button>
+              <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}><th>Category</th>
+              {categoryFilter && (
+                    <span
+                      onClick={() => handleClearCategoryFilter()}
+                      style={{ marginLeft: '8px', cursor: 'pointer', color: 'red' }}
+                    >
+                      X {/* or <i className="fas fa-times"></i> for an icon */}
+                    </span>
+                  )}</button>
                 <div className="dropdown-content">
-                  <a href="#">Sort Ascending</a>
-                  <a href="#">Sort Descending</a>
-                  <a href="#">Filter by Type</a>
+                  {console.log("CCCCCCCCCCCC ----> ",categoryUniqueValues)}
+                  {categoryUniqueValues && categoryUniqueValues.map((category) => { return <a onClick={() => { handleCategoryFilter(category) }}>{category}</a> })}
+
                 </div>
               </div></th>
               <th><div className="dropdown">
