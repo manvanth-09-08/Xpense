@@ -190,6 +190,7 @@ const Home = () => {
     if (data.success === true) {
       toast.success(data.message, toastOptions);
       handleClose();
+      fetchAllTransactions();
       setRefresh(!refresh);
     } else {
       toast.error(data.message, toastOptions);
@@ -215,40 +216,40 @@ const Home = () => {
     setFilterApplied(false);
   };
 
+  const fetchAllTransactions = async () => {
+    try {
+      setLoading(true);
+      console.log(cUser._id, frequency, startDate, endDate, type);
+      const { data } = await axios.post(getTransactions, {
+        userId: cUser._id,
+        frequency: frequency,
+        startDate: startDate,
+        endDate: endDate,
+        type: type,
+      });
+      console.log(data);
 
+      setTransactions(data.transactions);
+      // let category = ;
+      // category = category.categories
+      setCategories(JSON.parse(localStorage.getItem("user")).categories);
+      console.log("categorye : ",categories)
+
+      setLoading(false);
+    } catch (err) {
+      // toast.error("Error please Try again...", toastOptions);
+      setLoading(false);
+    }
+  };
 
 
 
   useEffect(() => {
 
-    const fetchAllTransactions = async () => {
-      try {
-        setLoading(true);
-        console.log(cUser._id, frequency, startDate, endDate, type);
-        const { data } = await axios.post(getTransactions, {
-          userId: cUser._id,
-          frequency: frequency,
-          startDate: startDate,
-          endDate: endDate,
-          type: type,
-        });
-        console.log(data);
-
-        setTransactions(data.transactions);
-        // let category = ;
-        // category = category.categories
-        setCategories(JSON.parse(localStorage.getItem("user")).categories);
-        console.log("categorye : ",categories)
-
-        setLoading(false);
-      } catch (err) {
-        // toast.error("Error please Try again...", toastOptions);
-        setLoading(false);
-      }
-    };
+   
 
     fetchAllTransactions();
-  }, [refresh, frequency, endDate, type, startDate, categoryShow, bankShow]);
+  }, [refresh, frequency, endDate, type, startDate, categoryShow]);
 
   const handleTableClick = (e) => {
     setView("table");
