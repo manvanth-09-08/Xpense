@@ -272,7 +272,7 @@ const Header = ({ setBankShow, setCategoryShow }) => {
           expand="lg"
           style={{ position: 'relative', zIndex: '2' }}
         >
-          <Container>
+          <Container fluid>
             <Navbar.Brand href="/" className="text-white navTitle">
               XPENS
             </Navbar.Brand>

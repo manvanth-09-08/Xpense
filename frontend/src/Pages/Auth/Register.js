@@ -149,7 +149,7 @@ const Register = () => {
         }}
       />
 
-      <Container className="mt-5" style={{position: 'relative', zIndex: "2 !important", color:"white !important"}}>
+      <Container fluid className="mt-5" style={{position: 'relative', zIndex: "2 !important", color:"white !important"}}>
       <Row>
         <h1 className="text-center">
           <AccountBalanceWalletIcon sx={{ fontSize: 40, color: "white"}}  className="text-center" />

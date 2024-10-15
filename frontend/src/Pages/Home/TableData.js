@@ -170,7 +170,7 @@ const TableData = (props) => {
 
   return (
     <>
-      <Container>
+      <Container fluid>
         <Table responsive="md" className="data-table">
           <thead>
             <tr>

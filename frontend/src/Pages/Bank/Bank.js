@@ -49,7 +49,7 @@ export const Bank =()=>{
     },[localStorage.getItem("user")])
 
     return(
-        <Container>
+        <Container fluid>
             <Table responsive="md" className="data-table">
                 <thead>
                     <tr>
