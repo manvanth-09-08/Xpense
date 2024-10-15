@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, Form } from "react-bootstrap";
+import { Button, Modal, Form, Container } from "react-bootstrap";
 import { addBankAccount, deleteBankAccount } from "../../utils/FetchApi";
 import { ToastContainer, toast } from "react-toastify";
 
 const Banks = ({banks}) => {
     return (
         <>
+        <Container >
         <div className="banks">
             {banks && banks.length === 0 ? "" :
                  (<div>
@@ -16,7 +17,7 @@ const Banks = ({banks}) => {
 
         </div>
 
-        
+        </Container>
         </>
 
        

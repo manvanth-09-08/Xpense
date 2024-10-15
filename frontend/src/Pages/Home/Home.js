@@ -20,7 +20,7 @@ import { getBankDetail } from "../../utils/FetchApi";
 import { Bank } from "../Bank/Bank";
 import { AddBankModal } from "./AddBankModal";
 import { Category } from "../Bank/Category";
-import  {AddCategoryModal}  from "./AddCategoryModal";
+import { AddCategoryModal } from "./AddCategoryModal";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ const Home = () => {
   const [showAddBankModal, setShowAddBankModal] = useState(false)
   const [categoryShow, setCategoryShow] = useState(false);
   const [addCategoryShow, setAddCategoryShow] = useState(false);
-  const [categories,setCategories] = useState(null);
+  const [categories, setCategories] = useState(null);
 
   const handleStartChange = (date) => {
     setStartDate(date);
@@ -127,15 +127,15 @@ const Home = () => {
     setShowAddBankModal(false)
   }
 
-  const handleCategoryClose = () =>{
+  const handleCategoryClose = () => {
     setCategoryShow(false);
   }
 
-  const handleAddNewCategory = ()=>{
+  const handleAddNewCategory = () => {
     setAddCategoryShow(true);
   }
 
-  const handleAddNewCategoryClose = ()=>{
+  const handleAddNewCategoryClose = () => {
     setAddCategoryShow(false);
   }
 
@@ -160,7 +160,7 @@ const Home = () => {
     handleResetButtonVisibility()
   };
 
-  const setBankAndCategories = async ()=>{
+  const setBankAndCategories = async () => {
     const responseData = await getBankDetail(cUser.email);
     const user = {
       ...cUser,
@@ -187,7 +187,7 @@ const Home = () => {
       toast.error("Please enter all the fields", toastOptions);
     }
     setLoading(true);
-    try{
+    try {
       const { data } = await axios.post(addTransaction, {
         title: title,
         amount: amount,
@@ -197,30 +197,30 @@ const Home = () => {
         userId: cUser._id,
         index: selectedBank,
       });
-  
+
       if (data.success === true) {
         toast.success(data.message, toastOptions);
         handleClose();
         fetchAllTransactions();
         setRefresh(!refresh);
-    }
-    await setBankAndCategories();
-    
-    
+      }
+      await setBankAndCategories();
 
 
-    setLoading(false);
-    
-    } catch(err){
-      
-     
+
+
+      setLoading(false);
+
+    } catch (err) {
+
+
       console.log(err)
       setLoading(false);
       toast.error(err.response.data.message, toastOptions);
-    
-  }
 
-    
+    }
+
+
   };
 
   const handleReset = () => {
@@ -249,8 +249,8 @@ const Home = () => {
       // category = category.categories
       await setBankAndCategories();
       setCategories(JSON.parse(localStorage.getItem("user")).categories);
-      console.log("categorye : ",categories)
-      
+      console.log("categorye : ", categories)
+
       setLoading(false);
     } catch (err) {
       // toast.error("Error please Try again...", toastOptions);
@@ -262,7 +262,7 @@ const Home = () => {
 
   useEffect(() => {
 
-   
+
 
     fetchAllTransactions();
   }, [refresh, frequency, endDate, type, startDate, categoryShow]);
@@ -285,7 +285,7 @@ const Home = () => {
         </>
       ) : (
         <>
-          <Container  
+          <Container
             style={{ position: "relative", zIndex: "2 !important" }}
             className="mt-3"
           >
@@ -343,12 +343,53 @@ const Home = () => {
                     Add Expense
                   </Button>
                 </div>
-                <Button onClick={handleShow} className="mobileBtn">
-                  +
-                </Button>
-                <Button onClick={handleShow} className="mobileBtn">
-                  -
-                </Button>
+                <div>
+                  {/* "+" button */}
+                  <Button
+                    onClick={handleAddIncome}
+                    className="fab-btn mobileBtn"
+                    style={{
+                      position: 'fixed ',
+                      bottom: '90px',
+                      right: '20px',
+                      borderRadius: '50%',
+                      backgroundColor: '#28a745',
+                      color: 'white',
+                      width: '60px',
+                      height: '60px',
+                      fontSize: '24px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      outline: 'none', // Removes focus outline
+                      border: 'none' // Removes the border completely
+                    }}>
+                    +
+                  </Button>
+
+                  <Button
+                    onClick={handleAddExpense}
+                    className="fab-btn mobileBtn"
+                    style={{
+                      position: 'fixed',
+                      bottom: '20px',
+                      right: '20px',
+                      borderRadius: '50%',
+                      backgroundColor: '#dc3545',
+                      color: 'white',
+                      width: '60px',
+                      height: '60px',
+                      fontSize: '24px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      outline: 'none', // Removes focus outline
+                      border: 'none' // Removes the border completely
+                    }}>
+                    -
+                  </Button>
+
+                </div>
                 <Modal show={show} onHide={handleClose} centered>
                   <Modal.Header closeButton>
                     <Modal.Title>Add Transaction Details</Modal.Title>
@@ -399,12 +440,12 @@ const Home = () => {
                           value={values.category}
                           onChange={handleChange}
                         >
-                          {console.log("categorye : ",categories)}
-                          <option value="">{categories&& categories.length===0?"No categories found, please add":""}</option>
-                        {categories?categories.map((category,index)=>{
-                          {console.log(category.category)}
-                          return (<option key={index} value={category.category}>{category.category}</option>)
-                        }):""}
+                          {console.log("categorye : ", categories)}
+                          <option value="">{categories && categories.length === 0 ? "No categories found, please add" : ""}</option>
+                          {categories ? categories.map((category, index) => {
+                            { console.log(category.category) }
+                            return (<option key={index} value={category.category}>{category.category}</option>)
+                          }) : ""}
                         </Form.Select>
                       </Form.Group>
 
@@ -460,10 +501,10 @@ const Home = () => {
 
                 </Modal>
                 <AddBankModal showAddBankModal={showAddBankModal} handleAddNewBankAccountClose={handleAddNewBankAccountClose} />
-              {console.log("category ----> ",categoryShow)}
-              <Modal show = {categoryShow} onHide={handleCategoryClose} centered>
-              
-              <Modal.Header closeButton>
+                {console.log("category ----> ", categoryShow)}
+                <Modal show={categoryShow} onHide={handleCategoryClose} centered>
+
+                  <Modal.Header closeButton>
                     <div className="d-flex justify-content-between w-100 align-items-center">
                       <Modal.Title>Category Details</Modal.Title>
                       <Button variant="success" onClick={handleAddNewCategory}>
@@ -472,8 +513,8 @@ const Home = () => {
                     </div>
                   </Modal.Header>
                   <Category></Category>
-                  <AddCategoryModal addCategoryShow={addCategoryShow}  handleAddNewCategory={handleAddNewCategoryClose} />
-              </Modal>
+                  <AddCategoryModal addCategoryShow={addCategoryShow} handleAddNewCategory={handleAddNewCategoryClose} />
+                </Modal>
               </div>
             </div>
             <br style={{ color: "white" }}></br>
