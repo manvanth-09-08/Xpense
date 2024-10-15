@@ -346,48 +346,51 @@ const Home = () => {
                 <div>
                   {/* "+" button */}
                   <Button
-                    onClick={handleAddIncome}
-                    className="fab-btn mobileBtn"
-                    style={{
-                      position: 'fixed ',
-                      bottom: '90px',
-                      right: '20px',
-                      borderRadius: '50%',
-                      backgroundColor: '#28a745',
-                      color: 'white',
-                      width: '60px',
-                      height: '60px',
-                      fontSize: '24px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      outline: 'none', // Removes focus outline
-                      border: 'none' // Removes the border completely
-                    }}>
-                    +
-                  </Button>
+  onClick={handleAddIncome}
+  className="fab-btn mobileBtn"
+  style={{
+    position: 'fixed',
+    bottom: '150px',  // Adjust this value for spacing above delete button
+    right: '20px',
+    zIndex: '1000',    // Ensure buttons stay on top
+    borderRadius: '50%',
+    backgroundColor: '#28a745',
+    color: 'white',
+    width: '60px',
+    height: '60px',
+    fontSize: '24px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    outline: 'none',
+    border: 'none'
+}}>
+  +
+</Button>
 
-                  <Button
-                    onClick={handleAddExpense}
-                    className="fab-btn mobileBtn"
-                    style={{
-                      position: 'fixed',
-                      bottom: '20px',
-                      right: '20px',
-                      borderRadius: '50%',
-                      backgroundColor: '#dc3545',
-                      color: 'white',
-                      width: '60px',
-                      height: '60px',
-                      fontSize: '24px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      outline: 'none', // Removes focus outline
-                      border: 'none' // Removes the border completely
-                    }}>
-                    -
-                  </Button>
+<Button
+  onClick={handleAddExpense}
+  className="fab-btn mobileBtn"
+  style={{
+    position: 'fixed',
+    bottom: '80px',    // Set below the "+" button
+    right: '20px',
+    zIndex: '1000',
+    borderRadius: '50%',
+    backgroundColor: '#dc3545',
+    color: 'white',
+    width: '60px',
+    height: '60px',
+    fontSize: '24px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    outline: 'none',
+    border: 'none'
+}}>
+  -
+</Button>
+
 
                 </div>
                 <Modal show={show} onHide={handleClose} centered>
