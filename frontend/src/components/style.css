@@ -33,3 +33,38 @@
 
   } */
 
+  /* style.css */
+
+/* Ensure navbar background color is properly displayed */
+.navbarCSS {
+  background-color: rgba(0, 0, 0, 0.9) !important;
+}
+
+/* style.css */
+
+/* Ensure buttons are responsive and do not fully cover the screen */
+.navButton {
+  width: auto; /* Ensure buttons have automatic width */
+  padding: 0.5rem 1rem; /* Keep padding small */
+  margin-bottom: 10px; 
+  border-color: black;/* Add some spacing between buttons */
+}
+
+@media (max-width: 768px) {
+  /* On smaller screens, reduce the button width and ensure they are aligned */
+  .navButton {
+    width: 100%; /* Take up full width in smaller screens for better alignment */
+    margin: 5px 0; /* Add vertical spacing */
+  }
+
+  /* Adjust padding and spacing for mobile */
+  .navbarCSS {
+    padding: 1rem 0.5rem; /* Reduce padding on mobile */
+  }
+}
+
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
