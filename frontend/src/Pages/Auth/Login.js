@@ -143,7 +143,7 @@ const Login = () => {
           bottom: 0,
         }}
       />
-      <Container fluid
+      <Container  
         className="mt-5"
         style={{ position: "relative", zIndex: "2 !important" }}
       >

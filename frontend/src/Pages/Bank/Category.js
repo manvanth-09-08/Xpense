@@ -49,7 +49,7 @@ export const Category =()=>{
     },[localStorage.getItem("user")])
 
     return(
-        <Container fluid>
+        <Container  >
             <Table responsive="md" className="data-table">
                 <thead>
                     <tr>

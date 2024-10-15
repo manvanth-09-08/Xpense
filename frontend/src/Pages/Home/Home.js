@@ -285,7 +285,7 @@ const Home = () => {
         </>
       ) : (
         <>
-          <Container fluid
+          <Container  
             style={{ position: "relative", zIndex: "2 !important" }}
             className="mt-3"
           >
