@@ -175,21 +175,21 @@ const TableData = (props) => {
           <thead>
             <tr>
               <th><div className="dropdown">
-                <button className="dropbtn"><th>Date</th></button>
+                <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}><th>Date</th></button>
                 <div className="dropdown-content">
                   <a onClick={() => { handleSorting('date', 'ascending') }}>Sort Ascending</a>
                   <a onClick={() => { handleSorting('date', 'descending') }}>Sort Descending</a>
                 </div>
               </div></th>
               <th><div className="dropdown">
-                <button className="dropbtn"><th>Title</th></button>
+                <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}><th>Title</th></button>
                 <div className="dropdown-content">
                   <a onClick={() => { handleSorting('title', 'ascending') }}>Sort Ascending</a>
                   <a onClick={() => { handleSorting('title', 'descending') }}>Sort Descending</a>
                 </div>
               </div></th>
               <th><div className="dropdown">
-                <button className="dropbtn"><th>Amount</th></button>
+                <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}><th>Amount</th></button>
                 <div className="dropdown-content">
                   <a onClick={() => { handleSorting('amount', 'ascending') }}>Sort Ascending</a>
                   <a onClick={() => { handleSorting('amount', 'descending') }}>Sort Descending</a>
