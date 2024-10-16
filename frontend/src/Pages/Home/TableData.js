@@ -65,7 +65,7 @@ const TableData = (props) => {
     });
 
     if (data.success === true) {
-      await setRefresh(!refresh);
+      setRefresh(!refresh);
       window.location.reload();
     }
     else {
@@ -257,7 +257,7 @@ const TableData = (props) => {
               <tr key={index}>
                 <td>{moment(item.date).format("YYYY-MM-DD")}</td>
                 <td>{item.title}</td>
-                <td>{item.amount}</td>
+                <td className={(item.transactionType==="Credit"?"text-success" :"text-danger")}>{(item.transactionType==="Credit"?"+" :"-") + item.amount}</td>
                 <td>{item.transactionType}</td>
                 <td>{item.bankName || ""}</td>
                 <td>{item.category}</td>

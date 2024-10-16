@@ -169,6 +169,7 @@ const Home = () => {
     }
     console.log("use : ------> ", user);
     localStorage.setItem("user", JSON.stringify(user))
+    fetchBanks();
   }
 
   const handleSubmit = async (e) => {
@@ -204,12 +205,12 @@ const Home = () => {
         fetchAllTransactions();
         setRefresh(!refresh);
       }
-      await setBankAndCategories();
 
 
 
 
-      setLoading(false);
+
+      // setLoading(false);
 
     } catch (err) {
 
@@ -235,6 +236,7 @@ const Home = () => {
     try {
       setLoading(true);
       console.log(cUser._id, frequency, startDate, endDate, type);
+      await setBankAndCategories();
       const { data } = await axios.post(getTransactions, {
         userId: cUser._id,
         frequency: frequency,
@@ -247,10 +249,9 @@ const Home = () => {
       setTransactions(data.transactions);
       // let category = ;
       // category = category.categories
-      await setBankAndCategories();
+      
       setCategories(JSON.parse(localStorage.getItem("user")).categories);
       console.log("categorye : ", categories)
-
       setLoading(false);
     } catch (err) {
       // toast.error("Error please Try again...", toastOptions);
@@ -346,50 +347,50 @@ const Home = () => {
                 <div>
                   {/* "+" button */}
                   <Button
-  onClick={handleAddIncome}
-  className="fab-btn mobileBtn"
-  style={{
-    position: 'fixed',
-    bottom: '150px',  // Adjust this value for spacing above delete button
-    right: '20px',
-    zIndex: '1000',    // Ensure buttons stay on top
-    borderRadius: '50%',
-    backgroundColor: '#28a745',
-    color: 'white',
-    width: '60px',
-    height: '60px',
-    fontSize: '24px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    outline: 'none',
-    border: 'none'
-}}>
-  +
-</Button>
+                    onClick={handleAddIncome}
+                    className="fab-btn mobileBtn"
+                    style={{
+                      position: 'fixed',
+                      bottom: '150px',  // Adjust this value for spacing above delete button
+                      right: '20px',
+                      zIndex: '1000',    // Ensure buttons stay on top
+                      borderRadius: '50%',
+                      backgroundColor: '#28a745',
+                      color: 'white',
+                      width: '60px',
+                      height: '60px',
+                      fontSize: '24px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      outline: 'none',
+                      border: 'none'
+                    }}>
+                    +
+                  </Button>
 
-<Button
-  onClick={handleAddExpense}
-  className="fab-btn mobileBtn"
-  style={{
-    position: 'fixed',
-    bottom: '80px',    // Set below the "+" button
-    right: '20px',
-    zIndex: '1000',
-    borderRadius: '50%',
-    backgroundColor: '#dc3545',
-    color: 'white',
-    width: '60px',
-    height: '60px',
-    fontSize: '24px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    outline: 'none',
-    border: 'none'
-}}>
-  -
-</Button>
+                  <Button
+                    onClick={handleAddExpense}
+                    className="fab-btn mobileBtn"
+                    style={{
+                      position: 'fixed',
+                      bottom: '80px',    // Set below the "+" button
+                      right: '20px',
+                      zIndex: '1000',
+                      borderRadius: '50%',
+                      backgroundColor: '#dc3545',
+                      color: 'white',
+                      width: '60px',
+                      height: '60px',
+                      fontSize: '24px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      outline: 'none',
+                      border: 'none'
+                    }}>
+                    -
+                  </Button>
 
 
                 </div>
