@@ -189,12 +189,27 @@ const TableData = (props) => {
                 </div>
               </div></th>
               <th><div className="dropdown">
-                <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}><th>Amount</th></button>
+                <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}><th>Amount</th>
+                {typeFilter && (
+                      <span
+                        onClick={() => handleClearTypeFilter()}
+                        style={{ marginLeft: '8px', cursor: 'pointer', color: 'red' }}
+                      >
+                        X 
+                      </span>
+                    )}
+                  </button>
                 <div className="dropdown-content">
-                  <a onClick={() => { handleSorting('amount', 'ascending') }}>Sort Ascending</a>
-                  <a onClick={() => { handleSorting('amount', 'descending') }}>Sort Descending</a>
-                  <a onClick={() => handleTypeChange('Credit')}>Credit</a>
+                  {typeFilter ? (<><a onClick={() => { handleSorting('amount', 'ascending') }}>Sort Ascending</a>
+                  <a onClick={() => { handleSorting('amount', 'descending') }}>Sort Descending</a></>):
+                  (
+                    <>
+                    <a onClick={() => handleTypeChange('Credit')}>Credit</a>
                     <a onClick={() => handleTypeChange('Expense')}>Expense</a>
+                    </>
+                  )}
+                  
+                  
                 </div>
               </div></th>
               {/* <th>
