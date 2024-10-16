@@ -193,9 +193,11 @@ const TableData = (props) => {
                 <div className="dropdown-content">
                   <a onClick={() => { handleSorting('amount', 'ascending') }}>Sort Ascending</a>
                   <a onClick={() => { handleSorting('amount', 'descending') }}>Sort Descending</a>
+                  <a onClick={() => handleTypeChange('Credit')}>Credit</a>
+                    <a onClick={() => handleTypeChange('Expense')}>Expense</a>
                 </div>
               </div></th>
-              <th>
+              {/* <th>
                 <div className="dropdown">
                   <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}>
                     <th>Type</th>
@@ -204,7 +206,7 @@ const TableData = (props) => {
                         onClick={() => handleClearTypeFilter()}
                         style={{ marginLeft: '8px', cursor: 'pointer', color: 'red' }}
                       >
-                        X {/* or <i className="fas fa-times"></i> for an icon */}
+                        X 
                       </span>
                     )}
                   </button>
@@ -214,7 +216,7 @@ const TableData = (props) => {
                   </div>
                 </div>
 
-              </th>
+              </th> */}
               <th><div className="dropdown">
                 <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}><th>Bank Acc</th>
                   {bankFilter && (
@@ -258,7 +260,6 @@ const TableData = (props) => {
                 <td>{moment(item.date).format("YYYY-MM-DD")}</td>
                 <td>{item.title}</td>
                 <td className={(item.transactionType==="Credit"?"text-success" :"text-danger")}>{(item.transactionType==="Credit"?"+" :"-") + item.amount}</td>
-                <td>{item.transactionType}</td>
                 <td>{item.bankName || ""}</td>
                 <td>{item.category}</td>
                 <td>

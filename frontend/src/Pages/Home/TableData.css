@@ -43,4 +43,42 @@
   .dropdown-content a:hover {
     background-color: #f1f1f1;
   }
+
+  /* .data-table td, .data-table th {
+    max-width: 150px; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+} */
+
+/* Tooltip styles 
+.data-table td:hover::after {
+    content: attr(data-tooltip); 
+    position: absolute;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    /* padding: 4px 8px; 
+    border-radius: 4px;
+    top: -35px; 
+    left: 0;
+    z-index: 10;
+    white-space: nowrap;
+    font-size: 12px;
+    max-width: 300px; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Optional: Tooltip arrow */
+/* .data-table td:hover::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    border: 5px solid transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.8);
+    z-index: 11;
+} */
+
   
