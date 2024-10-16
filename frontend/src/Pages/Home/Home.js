@@ -286,7 +286,7 @@ const Home = () => {
         </>
       ) : (
         <>
-          <Container
+          <Container 
             style={{ position: "relative", zIndex: "2 !important" }}
             className="mt-3"
           >
@@ -570,7 +570,7 @@ const Home = () => {
               <>
                 {console.log("hehehe")}
                 <Banks banks={banks}></Banks>
-                <TableData data={transactions} user={cUser} />
+                <TableData data={transactions} user={cUser} banks={banks} />
               </>
             ) : (
               <>

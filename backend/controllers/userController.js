@@ -186,7 +186,7 @@ export const deleteBankAccount = async (req, res) => {
             });
         }
 
-        user.bankAccount.splice(index, 1)
+        user.bankAccount.splice(user.bankAccount.findIndex((bank)=>bank.bankName === bankName), 1)
         user.save();
 
         return res.status(200).json({ success: true, message: "Bank account deleted successfully" })

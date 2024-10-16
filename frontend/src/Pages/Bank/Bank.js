@@ -27,7 +27,7 @@ export const Bank =()=>{
             if(responseData.success){
                 const user = JSON.parse(localStorage.getItem("user"));
                 let bankAccount = user.bankAccount;
-                bankAccount.splice( index,1)
+                bankAccount.splice( bankAccount.findIndex((bank)=>bank.bankName===bankName),1)
                 const userAux = {...user, bankAccount : bankAccount}
                 localStorage.setItem("user",JSON.stringify(userAux));
                 setBanks(bankAccount);

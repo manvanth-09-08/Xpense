@@ -14,15 +14,15 @@ export const addTransactionController = async (req, res) => {
       index,
     } = req.body;
 
-    console.log("transsss : ",title, amount, date, category, userId, transactionType,index);
+    console.log("transsss : ", title, amount, date, category, userId, transactionType, index);
 
     if (
       !title ||
       !amount ||
       !date ||
       !category ||
-      !transactionType||
-      index===undefined
+      !transactionType ||
+      index === undefined
     ) {
       return res.status(408).json({
         success: false,
@@ -30,7 +30,7 @@ export const addTransactionController = async (req, res) => {
       });
     }
 
-    console.log("selectedBank : ",index)
+    console.log("selectedBank : ", index)
 
     const user = await User.findById(userId);
 
@@ -42,7 +42,6 @@ export const addTransactionController = async (req, res) => {
     }
 
 
-    //TODO bring this bank name in db
     const bankName = user.bankAccount[index].bankName;
 
     let newTransaction = await Transaction.create({
@@ -52,18 +51,18 @@ export const addTransactionController = async (req, res) => {
       date: date,
       user: userId,
       transactionType: transactionType,
-      bankName:bankName,
+      bankName: bankName,
     });
 
     user.transactions.push(newTransaction);
     const bankAccount = user.bankAccount[index];
     let updatedBankAccount;
-    if(transactionType === "Credit"){
-      
-      updatedBankAccount = {...bankAccount, accountBalance : parseInt(bankAccount.accountBalance)+ parseInt(amount)}
-      
-    }else{
-      updatedBankAccount = {...bankAccount, accountBalance : parseInt(bankAccount.accountBalance)- parseInt(amount)}
+    if (transactionType === "Credit") {
+
+      updatedBankAccount = { ...bankAccount, accountBalance: parseInt(bankAccount.accountBalance) + parseInt(amount) }
+
+    } else {
+      updatedBankAccount = { ...bankAccount, accountBalance: parseInt(bankAccount.accountBalance) - parseInt(amount) }
     }
     user.bankAccount[index] = updatedBankAccount;
     user.save();
@@ -185,10 +184,24 @@ export const updateTransactionController = async (req, res) => {
   try {
     const transactionId = req.params.id;
 
-    const { title, amount, description, date, category, transactionType } =
+    const { title, amount, date, category, transactionType, bankName } =
       req.body;
 
-    console.log(title, amount, description, date, category, transactionType);
+    console.log(title, amount, date, category, transactionType, bankName);
+
+    if (
+      !title ||
+      !amount ||
+      !date ||
+      !category ||
+      !transactionType ||
+      !bankName
+    ) {
+      return res.status(408).json({
+        success: false,
+        messages: "Please Fill all fields",
+      });
+    }
 
     const transactionElement = await Transaction.findById(transactionId);
 
@@ -199,32 +212,36 @@ export const updateTransactionController = async (req, res) => {
       });
     }
 
-    if (title) {
-      transactionElement.title = title;
+    let amountChanged = 0;
+    transactionElement.title = title;
+    transactionElement.category = category;
+    transactionElement.date = date;
+
+
+
+
+    if (transactionElement.amount != amount) {
+
+      amountChanged -= transactionElement.amount;
+      amountChanged += parseInt(amount)
+      transactionElement.amount += amountChanged;
+    } else {
+      transactionElement.amount = parseInt(amount);
     }
 
-    if (description) {
-      transactionElement.description = description;
-    }
 
-    if (amount) {
-      transactionElement.amount = amount;
-    }
 
-    if (category) {
-      transactionElement.category = category;
+    if (transactionElement.transactionType != transactionType) {
+      //TODO when updated the transaction, it should be reflected in bank balance also
     }
-    if (transactionType) {
-      transactionElement.transactionType = transactionType;
-    }
+    transactionElement.transactionType = transactionType;
 
-    if (date) {
-      transactionElement.date = date;
-    }
+
+
+
 
     await transactionElement.save();
 
-    // await transactionElement.remove();
 
     return res.status(200).json({
       success: true,
