@@ -1,13 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Container, Table } from "react-bootstrap";
+import { Col, Container, Row, Table } from "react-bootstrap";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { deleteCategory } from "../../utils/FetchApi";
 import { ToastContainer, toast } from "react-toastify";
+import { AddCategoryModal } from "../Home/AddCategoryModal";
 
 export const Category =()=>{
     const [categories,setCategories] = useState(null);
     const [email,setEmail] = useState(null)
+    const [addCategoryShow, setAddCategoryShow] = useState(false);
+    const [category,setCategory] =useState(null)
+
+    const handleAddNewCategory = (category) => {
+        setAddCategoryShow(true);
+        setCategory(category)
+      }
+    
+      const handleAddNewCategoryClose = () => {
+        setAddCategoryShow(false);
+      }
 
     const toastOptions = {
         position: "bottom-right",
@@ -50,7 +62,7 @@ export const Category =()=>{
 
     return(
         <Container  >
-            <Table responsive="md" className="data-table">
+            <Table  className="data-table">
                 <thead>
                     <tr>
                         <td>Category Name</td>
@@ -60,16 +72,24 @@ export const Category =()=>{
                 <tbody>
                     {categories && categories.map((category,index)=> { 
                         return (<tr key={index}>
+                          
                             <td>{category.category}</td>
+                            
                             {/* <td>{bank.accountBalance}</td> */}
+                            
                             <td>
+                            
                   <div className="icons-handle">
                     <EditNoteIcon
                       sx={{ cursor: "pointer" }}
                     //   key={item._id}
                     //   id={item._id}
                     //   onClick={() => handleEditClick(item._id)}
+                    onClick={()=>handleAddNewCategory(category)}
                     />
+                    {console.log("---> cat : ",category)}
+                    
+                   
 
                     <DeleteForeverIcon
                       sx={{ color: "red", cursor: "pointer" }}
@@ -79,10 +99,15 @@ export const Category =()=>{
                     />
                     </div>
                     </td>
+                    
                         </tr>)
                     })}
                 </tbody>
             </Table>
+            {addCategoryShow &&
+            <AddCategoryModal addCategoryShow={addCategoryShow} handleAddNewCategory={handleAddNewCategoryClose} update={true} category={category} />
+       }
         </Container>
+        
     )
 }

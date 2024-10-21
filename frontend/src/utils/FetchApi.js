@@ -1,5 +1,5 @@
 import axios from "axios";
-import { loginAPI, addNewBankAccount, deleteExistingAccount,getBankDetails, deleteExistingCategory, addNewCategory } from "./ApiRequest";
+import { loginAPI, addNewBankAccount, deleteExistingAccount,getBankDetails, deleteExistingCategory, addNewCategory, updateExistingCategory } from "./ApiRequest";
 import { Category } from "../Pages/Bank/Category";
 
 export const logIn = async(email,password)=>{
@@ -69,6 +69,18 @@ export const addCategory = async(email, category)=>{
     try{
         const {data} = await axios.post(addNewCategory,{
             email, category
+        });
+        return data;
+    }catch(err){
+        console.log(err)
+        return err.response.data
+    }
+}
+
+export const updateCategory = async(email, category, previousCategoryName) =>{
+    try{
+        const {data} = await axios.post(updateExistingCategory,{
+            email, categoryName:category,previousCategoryName
         });
         return data;
     }catch(err){

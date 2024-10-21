@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
-import { addBankAccount, addCategory, deleteBankAccount } from "../../utils/FetchApi";
+import { addBankAccount, addCategory, deleteBankAccount, updateCategory } from "../../utils/FetchApi";
 import { ToastContainer, toast } from "react-toastify";
 
 
-export const AddCategoryModal = ({addCategoryShow,handleAddNewCategory})=>{
+
+export const AddCategoryModal = (props)=>{
 
     const [categories, setCategories] = useState(null);
     const [show,setShow] = useState(false);
     const [email,setEmail] = useState(null)
 
-    const [category,setCategory] = useState("");
+    const [category,setCategory] = useState(props.update?props.category.category :"");
 
     const [index,setIndex] = useState(null);
-
+    const [nameAlreadyExistsError, setNameAlreadyExistsError] = useState(false)
+    const [previousCategoryName,setpreviousCategoryName] = useState(props.update?props.category.category :"")
+    
+    
     const toastOptions = {
         position: "bottom-right",
         autoClose: 2000,
@@ -33,8 +37,48 @@ export const AddCategoryModal = ({addCategoryShow,handleAddNewCategory})=>{
     }
 
     const handleCategoryNameChange = (e)=>{
-        setCategory(e.target.value)
+      const enteredCategoryName = e.target.value.trim().toLowerCase(); // Trim and normalize case for comparison
+
+    // Check if the bank name already exists
+    const categoryExists = categories && categories.some((category) => category.category.toLowerCase() === enteredCategoryName);
+
+    if (categoryExists) {
+      setNameAlreadyExistsError(true);  // Set error state if the name already exists
+    } else {
+      setNameAlreadyExistsError(false); // Clear error state if name is unique
     }
+
+    setCategory(e.target.value.trim()); 
+
+    }
+
+
+    const handleUpdate = async()=>{
+      const updatedCategory = category;
+      try{
+        const responseData = await updateCategory(email,category, previousCategoryName)
+            if(responseData.success){
+                const user = JSON.parse(localStorage.getItem("user"));
+                let categories = user.categories;
+                categories = categories.map((category)=>{
+                  if(category.category === previousCategoryName)
+                      category.category = updatedCategory;
+                  return category;
+              })
+                const userAux = {...user, categories : categories}
+                localStorage.setItem("user",JSON.stringify(userAux));
+                
+                resetCategory();                
+                props.handleAddNewCategory();
+                fetchCategories();
+                toast.success(responseData.message, toastOptions);
+            }else{
+              toast.error(responseData.message, toastOptions);
+            }
+    }catch(err){
+      console.log(err)
+    }
+  }
 
 
 
@@ -51,12 +95,11 @@ export const AddCategoryModal = ({addCategoryShow,handleAddNewCategory})=>{
                 localStorage.setItem("user",JSON.stringify(userAux));
                 
                 resetCategory();                
-                handleAddNewCategory();
+                props.handleAddNewCategory();
                 fetchCategories();
                 toast.success(responseData.message, toastOptions);
             }else{
                 toast.error(responseData.message, toastOptions);
-                console.log("hehehehehe")
             }
             
         }catch(err){
@@ -77,7 +120,7 @@ export const AddCategoryModal = ({addCategoryShow,handleAddNewCategory})=>{
     }, [index])
 
     return (
-        <Modal show={addCategoryShow} onHide={handleAddNewCategory} centered>
+        <Modal show={props.addCategoryShow} onHide={props.handleAddNewCategory} centered>
                   <Modal.Header closeButton>
                     <Modal.Title>Category Details</Modal.Title>
                   </Modal.Header>
@@ -92,6 +135,9 @@ export const AddCategoryModal = ({addCategoryShow,handleAddNewCategory})=>{
                           value={category}
                           onChange={handleCategoryNameChange}
                         />
+                        {nameAlreadyExistsError && (
+              <p style={{ color: 'red' }}>Category already exists!</p>
+            )}
                       </Form.Group>
 
 
@@ -101,12 +147,18 @@ export const AddCategoryModal = ({addCategoryShow,handleAddNewCategory})=>{
                     </Form>
                   </Modal.Body>
                   <Modal.Footer>
-                    <Button variant="secondary" onClick={handleAddNewCategory}>
+                    <Button variant="secondary" onClick={props.handleAddNewCategory}>
                       Close
                     </Button>
-                    <Button variant="primary" onClick={handleSubmit}>
+                    {props.update?<Button variant="primary" onClick={handleUpdate} disabled={nameAlreadyExistsError}>
+                      Update
+                    </Button>:
+                    <Button variant="primary" onClick={handleSubmit} disabled={nameAlreadyExistsError}>
+                    Submit
+                  </Button>}
+                    {/* <Button variant="primary" onClick={handleSubmit} disabled={nameAlreadyExistsError}>
                       Submit
-                    </Button>
+                    </Button> */}
                   </Modal.Footer>
                 </Modal>
     )

@@ -8,6 +8,7 @@ export const addNewBankAccount = `${host}/api/auth/addBankAccount`;
 export const deleteExistingAccount = `${host}/api/auth/deleteBankAccount`;
 export const deleteExistingCategory = `${host}/api/auth/deleteCategory`;
 export const addNewCategory = `${host}/api/auth/addCategory`;
+export const updateExistingCategory = `${host}/api/auth/updateCategory`;
 export const getBankDetails = `${host}/api/auth/getBankDetails`;
 export const addTransaction = `${host}/api/v1/addTransaction`;
 export const getTransactions = `${host}/api/v1/getTransaction`;

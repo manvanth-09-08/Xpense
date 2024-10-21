@@ -87,7 +87,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchBanks();
-  }, [show, showAddBankModal, bankShow])
+  }, [show, showAddBankModal, bankShow, categoryShow])
 
   useEffect(() => {
     const avatarFunc = async () => {
@@ -266,7 +266,7 @@ const Home = () => {
 
 
     fetchAllTransactions();
-  }, [refresh, frequency, endDate, type, startDate, categoryShow]);
+  }, [refresh, frequency, endDate, type, startDate]);
 
   const handleTableClick = (e) => {
     setView("table");
@@ -510,8 +510,8 @@ const Home = () => {
 
                   <Modal.Header closeButton>
                     <div className="d-flex justify-content-between w-100 align-items-center">
-                      <Modal.Title>Category Details</Modal.Title>
-                      <Button variant="success" onClick={handleAddNewCategory}>
+                      <Modal.Title className="">Category Details</Modal.Title>
+                      <Button variant="success"  onClick={handleAddNewCategory}>
                         Create New
                       </Button>
                     </div>

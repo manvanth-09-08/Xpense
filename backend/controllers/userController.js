@@ -280,6 +280,50 @@ export const deleteCategory = async(req,res)=>{
     }
 }
 
+export const updateCategory = async(req,res)=>{
+    try{
+        const {categoryName,previousCategoryName, email} = req.body;
+        if (!categoryName || !previousCategoryName) {
+            return res.status(400).json({
+                success: false,
+                message: "Please enter Category Name",
+            });
+        }
+
+        if (!email) {
+            return res.status(401).json({
+                success: false,
+                message: "Please verify yourself",
+            });
+        }
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        user.categories = user.categories.map((category)=>{
+            console.log(category.category, categoryName, category.category == categoryName)
+            if(category.category === previousCategoryName)
+                category.category = categoryName;
+            return category;
+        })
+
+        console.log("category : ",user.categories)
+        user.markModified('categories');
+        user.save();
+
+        return res.status(200).json({ success: true, message: "Category updated successfully" })
+        
+    }catch(err){
+        return res.status(500).json({ success: false, message: "Internal server error" })
+    }
+}
+
 
 
 
