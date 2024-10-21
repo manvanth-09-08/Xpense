@@ -42,8 +42,20 @@ const userSchema = new mongoose.Schema({
         type:[],
     },
     
-    categories : {
-        type:[],
+    categories: {
+        type: [{
+            category: {
+                type: String,
+                required: true,
+            }
+        }],
+        default: [
+            { category: 'Food' },
+            { category: 'Travel' },
+            { category: 'Shopping' },
+            { category: 'Bills' },
+            { category: 'Others' }
+        ]
     }
 
 });
