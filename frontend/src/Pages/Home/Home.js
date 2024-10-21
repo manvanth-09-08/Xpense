@@ -516,7 +516,7 @@ const Home = () => {
                       </Button>
                     </div>
                   </Modal.Header>
-                  <Category></Category>
+                  <Category refresh={refresh} setRefresh={setRefresh}></Category>
                   <AddCategoryModal addCategoryShow={addCategoryShow} handleAddNewCategory={handleAddNewCategoryClose} />
                 </Modal>
               </div>

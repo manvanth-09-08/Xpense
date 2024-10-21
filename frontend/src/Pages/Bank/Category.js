@@ -6,7 +6,7 @@ import { deleteCategory } from "../../utils/FetchApi";
 import { ToastContainer, toast } from "react-toastify";
 import { AddCategoryModal } from "../Home/AddCategoryModal";
 
-export const Category =()=>{
+export const Category =(props)=>{
     const [categories,setCategories] = useState(null);
     const [email,setEmail] = useState(null)
     const [addCategoryShow, setAddCategoryShow] = useState(false);
@@ -105,7 +105,7 @@ export const Category =()=>{
                 </tbody>
             </Table>
             {addCategoryShow &&
-            <AddCategoryModal addCategoryShow={addCategoryShow} handleAddNewCategory={handleAddNewCategoryClose} update={true} category={category} />
+            <AddCategoryModal addCategoryShow={addCategoryShow} handleAddNewCategory={handleAddNewCategoryClose} update={true} category={category} refresh={props.refresh} setRefresh = {props.setRefresh}/>
        }
         </Container>
         

@@ -1,5 +1,6 @@
 import User from "../models/UserSchema.js";
 import bcrypt from "bcrypt";
+import Transaction from "../models/TransactionModel.js";
 
 export const registerControllers = async (req, res, next) => {
     try {
@@ -313,13 +314,31 @@ export const updateCategory = async(req,res)=>{
             return category;
         })
 
-        console.log("category : ",user.categories)
+        let transactions = await Transaction.find({user:user._id})
+       
+        for (let transaction of transactions) {
+            if (transaction.category === previousCategoryName) {
+                transaction.category = categoryName;
+                await transaction.save();  // Save the modified transaction
+            }
+        }
+
+        // transactions.markModified('category')
+        transactions = await Transaction.find({user:user._id})
+        user.transactions = transactions;
+        user.markModified('transactions');
         user.markModified('categories');
-        user.save();
+        
+        try{
+            await user.save();
+        }catch(err){
+            console.log(err)
+        }
 
         return res.status(200).json({ success: true, message: "Category updated successfully" })
         
     }catch(err){
+        console.log(err)
         return res.status(500).json({ success: false, message: "Internal server error" })
     }
 }

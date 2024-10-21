@@ -72,6 +72,7 @@ export const AddCategoryModal = (props)=>{
                 props.handleAddNewCategory();
                 fetchCategories();
                 toast.success(responseData.message, toastOptions);
+                props.setRefresh(! props.refresh)
             }else{
               toast.error(responseData.message, toastOptions);
             }
