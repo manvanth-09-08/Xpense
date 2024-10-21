@@ -204,6 +204,8 @@ export const updateTransactionController = async (req, res) => {
     }
 
     const transactionElement = await Transaction.findById(transactionId);
+    let user = await User.findById(transactionElement.user)
+    let bankAccount = user.bankAccount;
 
     if (!transactionElement) {
       return res.status(400).json({
@@ -213,28 +215,108 @@ export const updateTransactionController = async (req, res) => {
     }
 
     let amountChanged = 0;
-    transactionElement.title = title;
-    transactionElement.category = category;
-    transactionElement.date = date;
+    if (transactionElement.bankName != bankName) {
+      let bankAccountToBeChanged = bankAccount.filter((bank) => { return bank.bankName === bankName || bank.bankName === transactionElement.bankName })
+      if (bankAccountToBeChanged.length === 2) {
+        if (bankAccountToBeChanged[0].bankName === bankName) {
+          //this ensures element 0 will always have the preexisting bankName
+          [bankAccountToBeChanged[0], bankAccountToBeChanged[1]] = [bankAccountToBeChanged[1], bankAccountToBeChanged[0]]
+        }
 
+        if (transactionElement.transactionType != transactionType) {
+          if (transactionType === "Credit") {
+            bankAccountToBeChanged[0].accountBalance += transactionElement.amount;
+            bankAccountToBeChanged[1].accountBalance += amount;
+          } else {
+            bankAccountToBeChanged[0].accountBalance -= transactionElement.amount;
+            bankAccountToBeChanged[1].accountBalance -= amount;
+          }
+        } else {
+          if (transactionType === "Credit") {
+            bankAccountToBeChanged[0].accountBalance -= transactionElement.amount;
+            bankAccountToBeChanged[1].accountBalance += amount;
+          } else {
+            bankAccountToBeChanged[0].accountBalance += transactionElement.amount;
+            bankAccountToBeChanged[1].accountBalance -= amount;
+          }
 
+        }
+        saveBankDetailsUpdate(bankAccountToBeChanged, user);
+      } else if (bankAccountToBeChanged.length === 1) {
+        if (transactionType === "Credit") {
+          bankAccountToBeChanged[0].accountBalance += parseInt(amount);
+        } else {
+          bankAccountToBeChanged[0].accountBalance -= parseInt(amount);
+        }
+        saveBankDetailsUpdate(bankAccountToBeChanged, user);
+      }
 
-
-    if (transactionElement.amount != amount) {
-
-      amountChanged -= transactionElement.amount;
-      amountChanged += parseInt(amount)
-      transactionElement.amount += amountChanged;
     } else {
-      transactionElement.amount = parseInt(amount);
+      if (transactionElement.amount != amount) {
+        let bankAccountToBeChanged = bankAccount.filter((bank) => { return bank.bankName === bankName })
+        if (bankAccountToBeChanged.length === 0) {
+          return res.status(400).json({
+            success: false,
+            message: "Bank not found, you cannot edit this",
+          });
+        }
+        console.log(bankAccountToBeChanged)
+        amountChanged -= transactionElement.amount;
+        amountChanged += parseInt(amount)
+
+        if (transactionElement.transactionType === transactionType) {
+          if (transactionType === "Credit") {
+            //bankaccount + amountChanged
+            bankAccountToBeChanged[0].accountBalance += amountChanged;
+          }
+          else {
+            //bankaccount + (-1)*amountChanged
+            const auxAmountChanged = (-1) * amountChanged;
+            console.log("auxAmount : ", bankAccountToBeChanged[0].accountBalance, auxAmountChanged)
+            bankAccountToBeChanged[0].accountBalance += auxAmountChanged
+            console.log("auxAmount2 : ", bankAccountToBeChanged[0].accountBalance, auxAmountChanged)
+
+          }
+        } else {
+          const amountToBeChanged = transactionElement.amount + parseInt(amount);
+
+          if (transactionType === "Credit") {
+            //bankaccount + amountToBeChanged
+            bankAccountToBeChanged[0].accountBalance += amountToBeChanged;
+          } else {
+            // bankaccount - amountToBeChanged
+            bankAccountToBeChanged[0].accountBalance -= amountToBeChanged;
+          }
+        }
+        saveBankDetailsUpdate(bankAccountToBeChanged, user)
+        //transactionElement.amount += amountChanged;
+      } else {
+        if (transactionElement.transactionType !== transactionType) {
+          let bankAccountToBeChanged = bankAccount.filter((bank) => { return bank.bankName === bankName })
+          if (transactionType === "Credit") {
+            bankAccountToBeChanged[0].accountBalance += 2 * amount;
+          } else {
+            bankAccountToBeChanged[0].accountBalance -= 2 * amount;
+          }
+          saveBankDetailsUpdate(bankAccountToBeChanged, user)
+        }
+        // transactionElement.amount = parseInt(amount);
+      }
     }
+
+
 
 
 
     if (transactionElement.transactionType != transactionType) {
       //TODO when updated the transaction, it should be reflected in bank balance also
     }
+    transactionElement.title = title;
+    transactionElement.category = category;
+    transactionElement.date = date;
     transactionElement.transactionType = transactionType;
+    transactionElement.bankName = bankName;
+    transactionElement.amount = parseInt(amount)
 
 
 
@@ -255,3 +337,21 @@ export const updateTransactionController = async (req, res) => {
     });
   }
 };
+
+
+const saveBankDetailsUpdate = async (bankAccountToBeChanged, user) => {
+  const bankAccountAfterChanging = user.bankAccount.map((bank) => {
+    if (bank.bankName === bankAccountToBeChanged[0].bankName) {
+      bank.accountBalance = bankAccountToBeChanged[0].accountBalance;
+    }
+    return bank;
+  })
+
+  user.bankAccount = bankAccountAfterChanging;
+  user.markModified('bankAccount');
+  try {
+    await user.save()
+  } catch (err) {
+    console.log("error : ", err)
+  }
+}

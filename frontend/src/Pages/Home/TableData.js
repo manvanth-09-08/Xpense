@@ -24,6 +24,18 @@ const TableData = (props) => {
   const [typeFilter, setTypeFilter] = useState(false);
   const [bankFilter, setBankFilter] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState(false);
+  const [values, setValues] = useState({
+    title: "",
+    amount: "",
+    description: "",
+    category: "",
+    date: "",
+    transactionType: "",
+  });
+
+  const [isValidBank, setIsValidBank] = useState(false);
+
+
 
 
   const handleEditClick = (itemKey) => {
@@ -40,14 +52,11 @@ const TableData = (props) => {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-
-      console.log("vaues : ",values)
     const { data } = await axios.put(`${editTransactions}/${currId}`, {
       ...values,
     });
 
     if (data.success === true) {
-      console.log("trasaction element ---> ",data.transaction)
       handleClose();
       setRefresh(!refresh);
       window.location.reload();
@@ -76,14 +85,13 @@ const TableData = (props) => {
 
   };
 
-  const [values, setValues] = useState({
-    title: "",
-    amount: "",
-    description: "",
-    category: "",
-    date: "",
-    transactionType: "",
-  });
+
+
+  useEffect(() => {
+    // Check if the selected bankName is valid (exists in the list)
+    const bankExists = props.banks && props.banks.some(bank => bank.bankName === values.bankName);
+    setIsValidBank(bankExists);
+  }, [values.bankName, props.banks]);
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -340,20 +348,24 @@ const TableData = (props) => {
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formSelect">
-                        <Form.Label>Bank</Form.Label>
-                        <Form.Select
-                          name="selectedBank"
-                          value={values.bankName}
-                          onChange={handleChange}
-                        >
-                          {console.log(editingTransaction[0].bankName)}
-                          {
-                            props.banks && props.banks.map((bank, index) => {
-                              return <option key={index} value={bank.bankName}>{bank.bankName}</option>
-                            })
-                          }
-                        </Form.Select>
-                      </Form.Group>
+                  <Form.Label>Bank</Form.Label>
+                  <Form.Select
+                    name="bankName"
+                    value={values.bankName || ""}
+                    onChange={handleChange}
+                  >
+                    {!isValidBank && values.bankName && (
+                      <option value={values.bankName} disabled>
+                        {values.bankName} (Invalid or Unlisted)
+                      </option>
+                    )}
+                    {
+                      props.banks && props.banks.map((bank, index) => {
+                        return <option key={index} value={bank.bankName}>{bank.bankName}</option>
+                      })
+                    }
+                  </Form.Select>
+                </Form.Group>
 
                 <Form.Group
                   className="mb-3"
@@ -393,8 +405,8 @@ const TableData = (props) => {
                     name="transactionType"
                     value={values.transactionType}
                     onChange={handleChange}
-                  >{console.log("transsss : ",values)}
-                  
+                  >
+
                     <option value="Credit">Credit</option>
                     <option value="Expense">Expense</option>
                   </Form.Select>
@@ -408,7 +420,7 @@ const TableData = (props) => {
                   <Form.Control
                     type="date"
                     name="date"
-                    value={values.date ? new Date(values.date).toISOString().slice(0, 10) : ""} 
+                    value={values.date ? new Date(values.date).toISOString().slice(0, 10) : ""}
                     onChange={handleChange}
                   />
                 </Form.Group>
@@ -418,7 +430,7 @@ const TableData = (props) => {
               <Button variant="secondary" onClick={handleClose}>
                 Close
               </Button>
-              <Button variant="primary" type="submit" onClick={handleEditSubmit}>Submit</Button>
+              <Button variant="primary" type="submit" onClick={handleEditSubmit} disabled={!isValidBank}>Submit</Button>
             </Modal.Footer>
           </Modal>
           {/* </div> */}
