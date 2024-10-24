@@ -54,6 +54,18 @@ const Home = () => {
   const [categoryShow, setCategoryShow] = useState(false);
   const [addCategoryShow, setAddCategoryShow] = useState(false);
   const [categories, setCategories] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768); // Set breakpoint for mobile (max-width: 768px)
+    };
+
+    handleResize(); // Initial check
+    window.addEventListener("resize", handleResize); // Add event listener on resize
+
+    return () => window.removeEventListener("resize", handleResize); // Clean up event listener
+  }, []);
 
   const handleStartChange = (date) => {
     setStartDate(date);
@@ -278,7 +290,7 @@ const Home = () => {
 
   return (
     <>
-      <Header setBankShow={setBankShow} setCategoryShow={setCategoryShow} />
+      <Header setBankShow={setBankShow} setCategoryShow={setCategoryShow} handleAddIncome={handleAddIncome} handleAddExpense={handleAddExpense} />
 
       {loading ? (
         <>
@@ -287,37 +299,11 @@ const Home = () => {
       ) : (
         <>
           <Container 
-            style={{ position: "relative", zIndex: "2 !important" }}
+            style={{ position: "relative", zIndex: "2 !important",paddingBottom:isMobile ? "25%" : "0", }}
             className="mt-3"
           >
             <div className="filterRow">
-              <div className="text-white">
-                <Form.Group className="mb-3" controlId="formSelectFrequency">
-                  <Form.Label>Select Frequency</Form.Label>
-                  <Form.Select
-                    name="frequency"
-                    value={frequency}
-                    onChange={handleChangeFrequency}
-                  >
-                    <option value="7">Last Week</option>
-                    <option value="30">Last Month</option>
-                    <option value="365">Last Year</option>
-                    <option value="custom">Custom</option>
-                  </Form.Select>
-                </Form.Group>
-              </div>
-
-              {/* <Bu> */}
-              {console.log(filterApplied)}
-              {filterApplied ? (
-
-                <div className="text-white">
-
-                  <Button variant="primary" onClick={handleReset}>
-                    Reset Filter
-                  </Button>
-                </div>
-              ) : ""}
+             
 
 
               <div className="text-white iconBtnBox">
@@ -343,56 +329,6 @@ const Home = () => {
                   <Button onClick={handleAddExpense} className="addNew" variant="danger">
                     Add Expense
                   </Button>
-                </div>
-                <div>
-                  {/* "+" button */}
-                  <Button
-                    onClick={handleAddIncome}
-                    className="fab-btn mobileBtn"
-                    style={{
-                      position: 'fixed',
-                      bottom: '150px',  // Adjust this value for spacing above delete button
-                      right: '20px',
-                      zIndex: '1000',    // Ensure buttons stay on top
-                      borderRadius: '50%',
-                      backgroundColor: '#28a745',
-                      color: 'white',
-                      width: '60px',
-                      height: '60px',
-                      fontSize: '24px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      outline: 'none',
-                      border: 'none'
-                    }}>
-                    +
-                  </Button>
-
-                  <Button
-                    onClick={handleAddExpense}
-                    className="fab-btn mobileBtn"
-                    style={{
-                      position: 'fixed',
-                      bottom: '80px',    // Set below the "+" button
-                      right: '20px',
-                      zIndex: '1000',
-                      borderRadius: '50%',
-                      backgroundColor: '#dc3545',
-                      color: 'white',
-                      width: '60px',
-                      height: '60px',
-                      fontSize: '24px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      outline: 'none',
-                      border: 'none'
-                    }}>
-                    -
-                  </Button>
-
-
                 </div>
                 <Modal show={show} onHide={handleClose} centered>
                   <Modal.Header closeButton>
