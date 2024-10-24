@@ -7,6 +7,7 @@ import "./home.css";
 import { deleteTransactions, editTransactions } from "../../utils/ApiRequest";
 import axios from "axios";
 import "./TableData.css"
+import AnimatedSection from "../../utils/AnimatedSection";
 
 const TableData = (props) => {
   const [show, setShow] = useState(false);
@@ -278,7 +279,9 @@ const TableData = (props) => {
           </thead>
           <tbody className="text-white">
             {transactions && transactions.map((item, index) => (
+              <AnimatedSection transitionType="animate__fadeInLeft">
               <tr key={index}>
+                
                 <td>{moment(item.date).format("YYYY-MM-DD")}</td>
                 <td>{item.title}</td>
                 <td className={(item.transactionType === "Credit" ? "text-success" : "text-danger")}>{(item.transactionType === "Credit" ? "+" : "-") + item.amount}</td>
@@ -303,7 +306,9 @@ const TableData = (props) => {
 
                   </div>
                 </td>
+                
               </tr>
+              </AnimatedSection>
             ))}
           </tbody>
         </Table>

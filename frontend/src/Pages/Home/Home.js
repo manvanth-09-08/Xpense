@@ -21,6 +21,7 @@ import { Bank } from "../Bank/Bank";
 import { AddBankModal } from "./AddBankModal";
 import { Category } from "../Bank/Category";
 import { AddCategoryModal } from "./AddCategoryModal";
+import AnimatedSection from "../../utils/AnimatedSection";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -323,12 +324,16 @@ const Home = () => {
 
               <div>
                 <div className="addButtons">
+                  <AnimatedSection transitionType="animate__slideInLeft">
                   <Button onClick={handleAddIncome} className="addNew" variant="success">
                     Add Income
                   </Button>
+                  </AnimatedSection>
+                  <AnimatedSection transitionType="animate__slideInRight">
                   <Button onClick={handleAddExpense} className="addNew" variant="danger">
                     Add Expense
                   </Button>
+                  </AnimatedSection>
                 </div>
                 <Modal show={show} onHide={handleClose} centered>
                   <Modal.Header closeButton>
