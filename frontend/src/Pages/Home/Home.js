@@ -291,7 +291,7 @@ const Home = () => {
 
   return (
     <>
-      <Header setBankShow={setBankShow} setCategoryShow={setCategoryShow} handleAddIncome={handleAddIncome} handleAddExpense={handleAddExpense} />
+      <Header view={view} setBankShow={setBankShow} setCategoryShow={setCategoryShow} handleAddIncome={handleAddIncome} handleAddExpense={handleAddExpense} />
 
       {loading ? (
         <>
@@ -307,7 +307,7 @@ const Home = () => {
              
 
 
-              <div className="text-white iconBtnBox">
+              {/* <div className="text-white iconBtnBox">
                 <FormatListBulletedIcon
                   sx={{ cursor: "pointer" }}
                   onClick={handleTableClick}
@@ -320,10 +320,10 @@ const Home = () => {
                   className={`${view === "chart" ? "iconActive" : "iconDeactive"
                     }`}
                 />
-              </div>
+              </div> */}
 
               <div>
-                <div className="addButtons">
+                {/* <div className="addButtons">
                   <AnimatedSection transitionType="animate__slideInLeft">
                   <Button onClick={handleAddIncome} className="addNew" variant="success">
                     Add Income
@@ -334,7 +334,7 @@ const Home = () => {
                     Add Expense
                   </Button>
                   </AnimatedSection>
-                </div>
+                </div> */}
                 <Modal show={show} onHide={handleClose} centered>
                   <Modal.Header closeButton>
                     <Modal.Title>Add Transaction Details</Modal.Title>

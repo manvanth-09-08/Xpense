@@ -58,7 +58,7 @@
 .bankNames{
     /* margin-left: 5px; */
     margin-bottom: 20px;
-    margin-right: 5px;
+    /* margin-right: 5px; */
 
 }
 
@@ -79,9 +79,9 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    padding: 10px;
-    border: 2px solid white;
-    border-radius: 8px;
+    /* padding: 10px; */
+    /* border: 2px solid white; */
+    /* border-radius: 8px; */
     
 
 }
@@ -91,9 +91,10 @@
     color: black;
 }
 .iconDeactive{
-    background-color: rgb(78, 74, 78);
-    color: black;
+    background-color: black;
+    color: white;
 }
+
 
 @media only screen and (max-width: 600px) {
     .filterRow {
@@ -135,3 +136,29 @@
         margin-left: 0px !important;
     }
 }
+
+.same-size-button {
+    width: 100%; /* This ensures the button takes up the full width of the Col */
+    text-align: center;
+    white-space: nowrap;        /* Prevent text from wrapping onto multiple lines */
+    overflow: hidden;           /* Hide overflowed text */
+    text-overflow: ellipsis;  
+  }
+
+  .bank-button {
+    background-color: #4a4a4a; /* Medium gray to complement the white table header */
+    color: #d4af37; /* Muted gold for the text */
+    border: 1px solid #d4af37; /* Gold border for subtle contrast */
+    width: 100%;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .bank-button:hover {
+    background-color: #5c5c5c; /* Lighter gray on hover */
+    color: #f1c40f; /* Slightly brighter gold */
+    box-shadow: 0px 0px 5px 1px rgba(212, 175, 55, 0.2); /* Softer shadow for a minimal glow */
+  }
+  
+  
+  
+  
