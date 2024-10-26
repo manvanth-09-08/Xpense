@@ -291,7 +291,7 @@ const Home = () => {
 
   return (
     <>
-      <Header view={view} setBankShow={setBankShow} setCategoryShow={setCategoryShow} handleAddIncome={handleAddIncome} handleAddExpense={handleAddExpense} />
+      <Header view={view} setBankShow={setBankShow} setCategoryShow={setCategoryShow} handleAddIncome={handleAddIncome} handleAddExpense={handleAddExpense} handleTableClick={handleTableClick} handleChartClick={handleChartClick} />
 
       {loading ? (
         <>

@@ -145,21 +145,21 @@ const Header = (props) => {
 
     <Nav>  */}
   <Nav>
-    <div className="text-white iconBtnBox">
+    <div className="text-white iconBtnBox d-lg-none">
           
           <FormatListBulletedIcon
             sx={{ cursor: "pointer" }}
-            // onClick={handleTableClick}
+            onClick={() => props.handleTableClick()}
             className={`${props.view === "table" ? "iconActive" : "iconDeactive"
               } `}
               
           >
-            <small>HEHE</small>
+            
             </FormatListBulletedIcon>
           
           <BarChartIcon
             sx={{ cursor: "pointer" }}
-            // onClick={handleChartClick}
+            onClick={() => props.handleChartClick()}
             className={`${props.view === "chart" ? "iconActive" : "iconDeactive"
               }`}
           />
@@ -182,7 +182,7 @@ const Header = (props) => {
         <Nav>
         <Button
               variant="outline-light"
-              // onClick={handleTableClick}
+              onClick={() => props.handleTableClick()}
               // className="mx-1 navButton"
               className={`${props.view === "table" ? "iconActive" : "iconDeactive"} mx-1 navButton`}
             >
@@ -193,7 +193,7 @@ const Header = (props) => {
         <Nav>
         <Button
               variant="outline-light"
-              // onClick={handleTableClick}
+              onClick={() => props.handleChartClick()}
               className={`${props.view === "chart" ? "iconActive" : "iconDeactive"} mx-1 navButton`}
             >
               <i className="fas fa-chart-bar"></i> <small>Analysis</small>

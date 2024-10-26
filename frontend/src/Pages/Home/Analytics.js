@@ -9,13 +9,13 @@ import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 
-const Analytics = ({ transactions }) => {
+const Analytics = ({ transactions, user }) => {
   const TotalTransactions = transactions.length;
   const totalIncomeTransactions = transactions.filter(
-    (item) => item.transactionType === "credit"
+    (item) => item.transactionType === "Credit"
   );
   const totalExpenseTransactions = transactions.filter(
-    (item) => item.transactionType === "expense"
+    (item) => item.transactionType === "Expense"
   );
 
   let totalIncomePercent =
@@ -30,27 +30,21 @@ const Analytics = ({ transactions }) => {
     0
   );
   const totalTurnOverIncome = transactions
-    .filter((item) => item.transactionType === "credit")
+    .filter((item) => item.transactionType === "Credit")
     .reduce((acc, transaction) => acc + transaction.amount, 0);
   const totalTurnOverExpense = transactions
-    .filter((item) => item.transactionType === "expense")
+    .filter((item) => item.transactionType === "Expense")
     .reduce((acc, transaction) => acc + transaction.amount, 0);
 
   const TurnOverIncomePercent = (totalTurnOverIncome / totalTurnOver) * 100;
   const TurnOverExpensePercent = (totalTurnOverExpense / totalTurnOver) * 100;
+  console.log("cUser : ",user)
+  // const categories = 
 
-  const categories = [
-    "Groceries",
-    "Rent",
-    "Salary",
-    "Tip",
-    "Food",
-    "Medical",
-    "Utilities",
-    "Entertainment",
-    "Transportation",
-    "Other",
-  ];
+  let categories = transactions && transactions.map((transaction) => { return transaction.category });
+    categories = Array.from(new Set(categories))
+    console.log(categories)
+
 
   const colors = {
     "Groceries": '#FF6384',
@@ -135,7 +129,7 @@ const Analytics = ({ transactions }) => {
               </div>
               <div className="card-body">
                 {categories.map(category => {
-                  const income = transactions.filter(transaction => transaction.transactionType === "credit" && transaction.category === category).reduce((acc, transaction) => acc + transaction.amount, 0)
+                  const income = transactions.filter(transaction => transaction.transactionType === "Credit" && transaction.category === category).reduce((acc, transaction) => acc + transaction.amount, 0)
                   
                   const incomePercent = (income/ totalTurnOver) * 100;
 
@@ -144,7 +138,7 @@ const Analytics = ({ transactions }) => {
                   return(
                     <>
                     {income > 0 &&
-                      (<LineProgressBar label={category} percentage={incomePercent.toFixed(0)} lineColor={colors[category]} />)
+                      (<LineProgressBar label={category} percentage={incomePercent.toFixed(0)}  />)
 
                     }
                     </>
@@ -161,7 +155,7 @@ const Analytics = ({ transactions }) => {
               </div>
               <div className="card-body">
                 {categories.map(category => {
-                  const expenses = transactions.filter(transaction => transaction.transactionType === "expense" && transaction.category === category).reduce((acc, transaction) => acc + transaction.amount, 0)
+                  const expenses = transactions.filter(transaction => transaction.transactionType === "Expense" && transaction.category === category).reduce((acc, transaction) => acc + transaction.amount, 0)
                   
                   const expensePercent = (expenses/ totalTurnOver) * 100;
 
@@ -169,7 +163,7 @@ const Analytics = ({ transactions }) => {
                   return(
                     <>
                     {expenses > 0 &&
-                      (<LineProgressBar label={category} percentage={expensePercent.toFixed(0)} lineColor={colors[category]}/>)
+                      (<LineProgressBar label={category} percentage={expensePercent.toFixed(0)}/>)
 
                     }
                     </>
