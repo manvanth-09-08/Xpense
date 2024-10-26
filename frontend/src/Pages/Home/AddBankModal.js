@@ -104,7 +104,7 @@ export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose })
 
   useEffect(() => {
     fetchBanks();
-  }, [index])
+  }, [localStorage.getItem("user")])
 
   return (
     <Modal show={showAddBankModal} onHide={handleAddNewBankAccountClose} centered>

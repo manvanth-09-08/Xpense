@@ -118,7 +118,7 @@ export const AddCategoryModal = (props)=>{
 
     useEffect(() => {
         fetchCategories();        
-    }, [index])
+    }, [localStorage.getItem("user")])
 
     return (
         <Modal show={props.addCategoryShow} onHide={props.handleAddNewCategory} centered>
