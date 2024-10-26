@@ -37,7 +37,7 @@ const AnimatedSection = ({ children, transitionType }) => {
     if (animate) {
       const timeout = setTimeout(() => {
         setAnimate(false); // Reset animation state
-      }, 1000); // Adjust this duration to match your animation duration
+      }, 2000); // Adjust this duration to match your animation duration
 
       return () => clearTimeout(timeout); // Cleanup timeout
     }

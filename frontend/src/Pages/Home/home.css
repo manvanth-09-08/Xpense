@@ -52,7 +52,7 @@
 
 .banks{
     display: flex;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
 }
 
 .bankNames{
@@ -159,6 +159,25 @@
     box-shadow: 0px 0px 5px 1px rgba(212, 175, 55, 0.2); /* Softer shadow for a minimal glow */
   }
   
+  .no-bg {
+    background: transparent; /* No background */
+    color: #d4af37; /* Gold text color */
+    border: none; /* Remove border */
+    padding: 0; /* Remove padding */
+    cursor: pointer; /* Pointer on hover */
+    transition: color 0.3s ease; /* Smooth color transition */
+}
+
+.no-bg:hover {
+    color: #f1c40f; /* Slightly brighter color on hover */
+    background: none !important;
+}
+
+
+
+  
+
+
   
   
   
