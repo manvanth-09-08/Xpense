@@ -202,7 +202,9 @@ export const updateBankDetails = async(req,res)=>{
                 }
             }
         }
-
+        const transactions = await Transaction.find({user:user._id})
+        user.transactions = transactions;
+        user.markModified('transactions');
         user.markModified('bankAccount');
         try{
             await user.save();

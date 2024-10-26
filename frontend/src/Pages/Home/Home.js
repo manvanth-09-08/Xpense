@@ -131,7 +131,6 @@ const Home = () => {
   });
 
   const handleAddNewBankAccount = () => {
-
     setShowAddBankModal(true);
   }
 
@@ -442,7 +441,7 @@ const Home = () => {
                       </Button>
                     </div>
                   </Modal.Header>
-                  < Bank handleAddNewBankAccount={handleAddNewBankAccount}/>
+                  < Bank handleAddNewBankAccount={handleAddNewBankAccount}  refresh={refresh} setRefresh={setRefresh}/>
 
                 </Modal>
                 <AddBankModal showAddBankModal={showAddBankModal} handleAddNewBankAccountClose={handleAddNewBankAccountClose} />

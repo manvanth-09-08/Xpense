@@ -4,7 +4,7 @@ import { addBankAccount, deleteBankAccount, updateBankDetails } from "../../util
 import { ToastContainer, toast } from "react-toastify";
 
 
-export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose, editingBankName, editingBankBalance }) => {
+export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose, editingBankName, editingBankBalance, refresh, setRefresh }) => {
 
   const [banks, setBanks] = useState(null);
   const [show, setShow] = useState(false);
@@ -93,6 +93,7 @@ export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose, e
         handleAddNewBankAccountClose();
         fetchBanks();
         toast.success(responseData.message, toastOptions);
+        setRefresh(!refresh)
       }else {
         toast.error(responseData.message, toastOptions);
       }

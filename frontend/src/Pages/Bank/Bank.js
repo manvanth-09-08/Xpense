@@ -6,7 +6,7 @@ import { deleteBankAccount } from "../../utils/FetchApi";
 import { ToastContainer, toast } from "react-toastify";
 import { AddBankModal } from "../Home/AddBankModal";
 
-export const Bank =()=>{
+export const Bank =(props)=>{
     const [banks,setBanks] = useState(null);
     const [email,setEmail] = useState(null);
     const [editBank,setEditBank] =useState(false)
@@ -102,7 +102,7 @@ export const Bank =()=>{
                 </tbody>
             </Table>
             {editBank && 
-                <AddBankModal showAddBankModal={editBank} handleAddNewBankAccountClose={handleEditBankClose} editingBankName={editingBankName} editingBankBalance={editingBankBalance} />
+                <AddBankModal showAddBankModal={editBank} handleAddNewBankAccountClose={handleEditBankClose} editingBankName={editingBankName} editingBankBalance={editingBankBalance}  refresh={props.refresh} setRefresh = {props.setRefresh}/>
                 }
         </Container>
     )
