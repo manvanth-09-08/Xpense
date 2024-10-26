@@ -16,7 +16,7 @@ const Banks = ({ banks }) => {
                 return Math.min(prev + (window.innerWidth < 768 ? 3 : 12), banks.length);
             }
         });
-        console.log("hehehe this calleddddd : ",visibleBanks)
+        
     };
 
     let isExpanded
@@ -40,7 +40,7 @@ const Banks = ({ banks }) => {
                                         overlay={<Tooltip>{`Balance: ₹${bank.accountBalance}`}</Tooltip>}
                                     >
                                         {/* <AnimatedSection key={index} transitionType="animate__fadeIn"> */}
-                                        <Button className="mb-3 same-size-button bank-button " variant="dark">
+                                        <Button className="mb-3 same-size-button bank-button" variant="dark">
                                             {bank.bankName}
                                         </Button>
                                         {/* </AnimatedSection> */}

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
-import { addBankAccount, deleteBankAccount } from "../../utils/FetchApi";
+import { addBankAccount, deleteBankAccount, updateBankDetails } from "../../utils/FetchApi";
 import { ToastContainer, toast } from "react-toastify";
 
 
-export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose }) => {
+export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose, editingBankName, editingBankBalance }) => {
 
   const [banks, setBanks] = useState(null);
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState(null)
 
-  const [bankName, setBankName] = useState("");
-  const [bankBalance, setBankBalance] = useState(0);
+  const [bankName, setBankName] = useState(editingBankName);
+  const [bankBalance, setBankBalance] = useState(editingBankBalance);
   const [nameAlreadyExistsError, setNameAlreadyExistsError] = useState(false)
 
   const [index, setIndex] = useState(null);
@@ -68,6 +68,37 @@ export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose })
     setBankName(bankName);
     setBankBalance(accountBalance);
     setIndex(index)
+  }
+
+  const handleUpdate = async()=>{
+    try{
+      console.log("inside responseData")
+      const responseData = await updateBankDetails(email,bankName,bankBalance, editingBankName)
+      console.log("inside responseData")
+      if(responseData.success){
+        console.log("inside responseData")
+        const user = JSON.parse(localStorage.getItem("user"));
+        let bankAccount = user.bankAccount;
+        bankAccount = bankAccount.map((bank)=>{
+          if(bank.bankName === editingBankName){
+              bank.bankName = bankName;
+              bank.accountBalance = bankBalance;
+          }
+          return bank;
+      })
+      const userAux = { ...user, bankAccount: bankAccount }
+        localStorage.setItem("user", JSON.stringify(userAux));
+
+        resetBankDetails();
+        handleAddNewBankAccountClose();
+        fetchBanks();
+        toast.success(responseData.message, toastOptions);
+      }else {
+        toast.error(responseData.message, toastOptions);
+      }
+    }catch(err){
+      console.log(err)
+    }
   }
 
   const handleSubmit = async () => {
@@ -147,9 +178,15 @@ export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose })
         <Button variant="secondary" onClick={handleAddNewBankAccountClose}>
           Close
         </Button>
+        {editingBankName ? (<Button variant="primary" onClick={handleUpdate} disabled={nameAlreadyExistsError}>
+          Update
+        </Button>) :
         <Button variant="primary" onClick={handleSubmit} disabled={nameAlreadyExistsError}>
+        Submit
+      </Button>}
+        {/* <Button variant="primary" onClick={handleSubmit} disabled={nameAlreadyExistsError}>
           Submit
-        </Button>
+        </Button> */}
       </Modal.Footer>
     </Modal>
   )

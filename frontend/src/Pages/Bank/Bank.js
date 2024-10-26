@@ -4,10 +4,16 @@ import EditNoteIcon from "@mui/icons-material/EditNote";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { deleteBankAccount } from "../../utils/FetchApi";
 import { ToastContainer, toast } from "react-toastify";
+import { AddBankModal } from "../Home/AddBankModal";
 
 export const Bank =()=>{
     const [banks,setBanks] = useState(null);
-    const [email,setEmail] = useState(null)
+    const [email,setEmail] = useState(null);
+    const [editBank,setEditBank] =useState(false)
+
+    const [editingBankName,setEditingBankName] = useState(null);
+    const [editingBankBalance,setEditingBankBalance] =useState(null);
+
 
     const toastOptions = {
         position: "bottom-right",
@@ -19,6 +25,16 @@ export const Bank =()=>{
         progress: undefined,
         theme: "dark",
       };
+
+      const handleEditClick = (bankName,bankBalance)=>{
+        setEditBank(true);
+        setEditingBankName(bankName);
+        setEditingBankBalance(bankBalance);
+      }
+
+      const handleEditBankClose = ()=>{
+        setEditBank(false);
+      }
 
     const handleDeleteBank = async(bankName,bankBalance,index)=>{
         try{
@@ -68,9 +84,9 @@ export const Bank =()=>{
                   <div className="icons-handle">
                     <EditNoteIcon
                       sx={{ cursor: "pointer" }}
-                    //   key={item._id}
+                      key={index}
                     //   id={item._id}
-                    //   onClick={() => handleEditClick(item._id)}
+                      onClick={() => handleEditClick(bank.bankName,bank.accountBalance)}
                     />
 
                     <DeleteForeverIcon
@@ -85,6 +101,9 @@ export const Bank =()=>{
                     })}
                 </tbody>
             </Table>
+            {editBank && 
+                <AddBankModal showAddBankModal={editBank} handleAddNewBankAccountClose={handleEditBankClose} editingBankName={editingBankName} editingBankBalance={editingBankBalance} />
+                }
         </Container>
     )
 }

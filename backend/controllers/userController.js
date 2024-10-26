@@ -166,6 +166,56 @@ export const addNewBankAccount = async (req, res) => {
     }
 }
 
+export const updateBankDetails = async(req,res)=>{
+    try{
+        const {email,bankName,accountBalance, previousBankName} = req.body;
+        console.log(email,bankName,accountBalance, previousBankName);
+        if (!email || !bankName || !accountBalance) {
+            return res.status(400).json({
+                success: false,
+                message: "Please enter All Fields",
+            });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        user.bankAccount = user.bankAccount.map((bank)=>{
+            if(bank.bankName === previousBankName){
+                bank.bankName = bankName;
+                bank.accountBalance = parseInt(accountBalance);
+            }
+            return bank
+        })
+
+        if(previousBankName !== bankName){
+            const transactions = await Transaction.find({user:user._id})
+            for (let transaction of transactions) {
+                if (transaction.bankName === previousBankName) {
+                    transaction.bankName = bankName;
+                    await transaction.save();  // Save the modified transaction
+                }
+            }
+        }
+
+        user.markModified('bankAccount');
+        try{
+            await user.save();
+        }catch(err){
+            console.log("error updating the bank account : ",err)
+        }
+        return res.status(200).json({ success: true, message: "Bank Updated"})
+    }catch(err){
+        console.log("error in update bank details : ",err)
+        return res.status(500).json({ success: false, message: "Internal server error" })
+    }
+}
+
 
 export const deleteBankAccount = async (req, res) => {
     try {

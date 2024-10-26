@@ -442,7 +442,7 @@ const Home = () => {
                       </Button>
                     </div>
                   </Modal.Header>
-                  < Bank />
+                  < Bank handleAddNewBankAccount={handleAddNewBankAccount}/>
 
                 </Modal>
                 <AddBankModal showAddBankModal={showAddBankModal} handleAddNewBankAccountClose={handleAddNewBankAccountClose} />
