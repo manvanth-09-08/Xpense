@@ -384,21 +384,11 @@ const TableData = (props) => {
                     value={values.category}
                     onChange={handleChange}
                   >
-                    <option value="">{editingTransaction[0].category}</option>
-                    <option value="Groceries">Groceries</option>
-                    <option value="Rent">Rent</option>
-                    <option value="Salary">Salary</option>
-                    <option value="Tip">Tip</option>
-                    <option value="Food">Food</option>
-                    <option value="Medical">Medical</option>
-                    <option value="Utilities">Utilities</option>
-                    <option value="Entertainment">
-                      Entertainment
-                    </option>
-                    <option value="Transportation">
-                      Transportation
-                    </option>
-                    <option value="Other">Other</option>
+                    <option value="">{data.categories && data.categories.length === 0 ? "No categories found, please add" : ""}</option>
+                          {data.categories ? data.categories.map((category, index) => {
+                            
+                            return (<option key={index} value={category.category}>{category.category}</option>)
+                          }) : ""}
                   </Form.Select>
                 </Form.Group>
 

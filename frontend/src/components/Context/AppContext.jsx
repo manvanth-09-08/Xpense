@@ -35,6 +35,26 @@ export const appReducer = (state,action)=>{
 
         case "categories" : return {...state,categories:action.payload};
 
+        case "deleteCategory" : {
+            let categories = state.categories;
+            categories.splice( categories.findIndex((category)=>category.category===action.payload),1)
+            return{
+                ...state,
+                categories:categories,
+            }
+        }
+
+        case "addCategory" :{
+            let categories = state.categories;
+            categories.push({category : action.payload})
+            return{
+                ...state,
+                categories:categories,
+            }
+        }
+
+
+
         case "loading" : return {...state,loading:action.payload};
 
         case "addCategoryModal" : return {...state,addCategoryModal:action.payload};

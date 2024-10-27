@@ -49,7 +49,7 @@ export const AddCategoryModal = (props)=>{
       const enteredCategoryName = e.target.value.trim().toLowerCase(); // Trim and normalize case for comparison
 
     // Check if the bank name already exists
-    const categoryExists = categories && categories.some((category) => category.category.toLowerCase() === enteredCategoryName);
+    const categoryExists = data.categories && data.categories.some((category) => category.category.toLowerCase() === enteredCategoryName);
 
     if (categoryExists) {
       setNameAlreadyExistsError(true);  // Set error state if the name already exists
@@ -66,20 +66,8 @@ export const AddCategoryModal = (props)=>{
       const updatedCategory = category;
       try{
         const responseData = await updateCategory(email,category, previousCategoryName)
-            if(responseData.success){
-                const user = JSON.parse(localStorage.getItem("user"));
-                let categories = user.categories;
-                categories = categories.map((category)=>{
-                  if(category.category === previousCategoryName)
-                      category.category = updatedCategory;
-                  return category;
-              })
-                const userAux = {...user, categories : categories}
-                localStorage.setItem("user",JSON.stringify(userAux));
-                
-                resetCategory();                
+            if(responseData.success){                       
                 props.handleAddNewCategory();
-                fetchCategories();
                 toast.success(responseData.message, toastOptions);
                 props.setRefresh(! props.refresh)
             }else{
@@ -98,16 +86,11 @@ export const AddCategoryModal = (props)=>{
         try{
             const responseData = await addCategory(email,category)
             if(responseData.success){
-                const user = JSON.parse(localStorage.getItem("user"));
-                let categories = user.categories;
-                categories.push( {category})
-                const userAux = {...user, categories : categories}
-                localStorage.setItem("user",JSON.stringify(userAux));
-                
+                dispatch({type:"addCategory", payload : category})
                 resetCategory();                
                 props.handleAddNewCategory();
-                fetchCategories();
                 toast.success(responseData.message, toastOptions);
+                dispatch({type:"reload"})
             }else{
                 toast.error(responseData.message, toastOptions);
             }

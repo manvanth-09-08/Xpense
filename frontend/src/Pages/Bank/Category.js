@@ -39,12 +39,7 @@ export const Category =(props)=>{
             console.log(email,category,index)
             const responseData = await deleteCategory(email,category,index)
             if(responseData.success){
-                const user = JSON.parse(localStorage.getItem("user"));
-                let categories = user.categories;
-                categories.splice( index,1)
-                const userAux = {...user, categories : categories}
-                localStorage.setItem("user",JSON.stringify(userAux));
-                setCategories(categories);
+                dispatch({type:"deleteCategory" , payload:category});
                 toast.success(responseData.message, toastOptions);
             }else{
                 toast.error(responseData.message, toastOptions);
@@ -57,10 +52,8 @@ export const Category =(props)=>{
 
     useEffect(()=>{
         const user = JSON.parse(localStorage.getItem("user"));
-        console.log(user.categories)
-        setCategories(user.categories);
         setEmail(user.email);
-    },[localStorage.getItem("user")])
+    },[dispatch,data.reload])
 
     return(
         <Container  >
@@ -72,7 +65,7 @@ export const Category =(props)=>{
                     </tr>
                 </thead>
                 <tbody>
-                    {categories && categories.map((category,index)=> { 
+                    {data.categories && data.categories.map((category,index)=> { 
                         return (<tr key={index}>
                           
                             <td>{category.category}</td>
