@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useReducer }  from 'react';
 import "./App.css";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Login from './Pages/Auth/Login';
@@ -8,7 +8,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './Pages/Home/Home';
 import SetAvatar from './Pages/Avatar/setAvatar';
 import { Bank } from './Pages/Bank/Bank';
-
 
 
 const App = () => {

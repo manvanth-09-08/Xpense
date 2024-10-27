@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { useNavigate } from "react-router-dom";
 import { Button, Modal, Form, Container } from "react-bootstrap";
@@ -22,6 +22,7 @@ import { AddBankModal } from "./AddBankModal";
 import { Category } from "../Bank/Category";
 import { AddCategoryModal } from "./AddCategoryModal";
 import AnimatedSection from "../../utils/AnimatedSection";
+import { AppContext } from "../../components/Context/AppContext";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -36,6 +37,9 @@ const Home = () => {
     progress: undefined,
     theme: "dark",
   };
+
+  const {data,dispatch} = useContext(AppContext);
+
   const [cUser, setcUser] = useState();
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -57,16 +61,7 @@ const Home = () => {
   const [categories, setCategories] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // Set breakpoint for mobile (max-width: 768px)
-    };
-
-    handleResize(); // Initial check
-    window.addEventListener("resize", handleResize); // Add event listener on resize
-
-    return () => window.removeEventListener("resize", handleResize); // Clean up event listener
-  }, []);
+ 
 
   const handleStartChange = (date) => {
     setStartDate(date);
@@ -91,16 +86,6 @@ const Home = () => {
     handleShow();
   }
 
-  const fetchBanks = () => {
-    if (localStorage.getItem("user")) {
-      const user = JSON.parse(localStorage.getItem("user"));
-      setBanks(user.bankAccount)
-    }
-  }
-
-  useEffect(() => {
-    fetchBanks();
-  }, [show, showAddBankModal, bankShow, categoryShow])
 
   useEffect(() => {
     const avatarFunc = async () => {
@@ -120,6 +105,18 @@ const Home = () => {
 
     avatarFunc();
   }, [navigate]);
+
+   //to give the padding below if its mobile
+  useEffect(() => {
+      const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize); 
+
+    return () => window.removeEventListener("resize", handleResize); 
+  }, []);
 
   const [values, setValues] = useState({
     title: "",
@@ -174,14 +171,10 @@ const Home = () => {
 
   const setBankAndCategories = async () => {
     const responseData = await getBankDetail(cUser.email);
-    const user = {
-      ...cUser,
-      bankAccount: responseData.bankDetaile,
-      categories: responseData.categories,
-    }
-    console.log("use : ------> ", user);
-    localStorage.setItem("user", JSON.stringify(user))
-    fetchBanks();
+    dispatch({type:"banks", payload:responseData.bankDetaile})
+    dispatch({type:"categories", payload:responseData.categories})
+    
+    // fetchBanks();
   }
 
   const handleSubmit = async (e) => {
@@ -263,6 +256,7 @@ const Home = () => {
       // category = category.categories
       
       setCategories(JSON.parse(localStorage.getItem("user")).categories);
+      dispatch({type:"categories" , payload:categories})
       console.log("categorye : ", categories)
       setLoading(false);
     } catch (err) {
@@ -298,6 +292,7 @@ const Home = () => {
         </>
       ) : (
         <>
+        {console.log("category , bank",data.banks,data.categories)}
           <Container 
             style={{ position: "relative", zIndex: "2 !important",paddingBottom:isMobile ? "25%" : "0", }}
             className="mt-3"
@@ -366,11 +361,11 @@ const Home = () => {
                         <Form.Label>Bank</Form.Label>
                         <Form.Select
                           name="selectedBank"
-                          value={selectedBank && banks[selectedBank]}
+                          value={selectedBank && data.banks[selectedBank]}
                           onChange={handleChange}
                         >
                           {
-                            banks && banks.map((bank, index) => {
+                            data.banks && data.banks.map((bank, index) => {
                               return <option value={index}>{bank.bankName}</option>
                             })
                           }

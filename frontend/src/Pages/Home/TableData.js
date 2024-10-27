@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Container, Form, Modal, Table } from "react-bootstrap";
 import moment from "moment";
 import EditNoteIcon from "@mui/icons-material/EditNote";
@@ -8,8 +8,10 @@ import { deleteTransactions, editTransactions } from "../../utils/ApiRequest";
 import axios from "axios";
 import "./TableData.css"
 import AnimatedSection from "../../utils/AnimatedSection";
+import { AppContext } from "../../components/Context/AppContext";
 
 const TableData = (props) => {
+  const {data,dispatch} =useContext(AppContext)
   const [show, setShow] = useState(false);
   const [transactions, setTransactions] = useState([]);
   // const [loading, setLoading] = useState(false);
@@ -90,7 +92,7 @@ const TableData = (props) => {
 
   useEffect(() => {
     // Check if the selected bankName is valid (exists in the list)
-    const bankExists = props.banks && props.banks.some(bank => bank.bankName === values.bankName);
+    const bankExists = data.banks && data.banks.some(bank => bank.bankName === values.bankName);
     setIsValidBank(bankExists);
   }, [values.bankName, props.banks]);
 
@@ -365,7 +367,7 @@ const TableData = (props) => {
                       </option>
                     )}
                     {
-                      props.banks && props.banks.map((bank, index) => {
+                      data.banks && data.banks.map((bank, index) => {
                         return <option key={index} value={bank.bankName}>{bank.bankName}</option>
                       })
                     }

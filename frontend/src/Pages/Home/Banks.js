@@ -1,38 +1,41 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, Container, Row, Col, OverlayTrigger, Tooltip } from "react-bootstrap";
 import AnimatedSection from "../../utils/AnimatedSection";
+import { AppContext } from "../../components/Context/AppContext";
 
 
-const Banks = ({ banks }) => {
+const Banks = ({banks }) => {
+
+    const {data,dispatch} = useContext(AppContext);
    
-    const [visibleBanks, setVisibleBanks] = useState(window.innerWidth < 768 ? 3 : 12); // Set initial visible banks based on screen width
+    const [visibleBanks, setVisibleBanks] = useState(window.innerWidth < 768 ? 3 : 12); // Set initial visible data.banks based on screen width
 
     const handleShowMore = () => {
 
          setVisibleBanks((prev) => {
-            if (prev >= banks.length) {
+            if (prev >= data.data.banks.length) {
                 return window.innerWidth < 768 ? 3 : 12;
             } else {
-                return Math.min(prev + (window.innerWidth < 768 ? 3 : 12), banks.length);
+                return Math.min(prev + (window.innerWidth < 768 ? 3 : 12), data.banks.length);
             }
         });
         
     };
 
     let isExpanded
-    if(banks)
-     isExpanded = visibleBanks >= banks.length;
+    if(data.banks)
+     isExpanded = visibleBanks >= data.banks.length;
     // Effect to handle window resize
     
     return (
         <>
             <Container>
             
-                <Row className="banks">
-                    {banks && banks.length === 0 ? (
+                <Row className="data.banks">
+                    {data.banks && data.banks.length === 0 ? (
                         <p>No banks available</p>
                     ) : (
-                       banks && banks.slice(0, visibleBanks).map((bank, index) => (
+                       data.banks && data.banks.slice(0, visibleBanks).map((bank, index) => (
                             
                                 <Col xs={4} md={1}>
                                     <OverlayTrigger
@@ -50,7 +53,7 @@ const Banks = ({ banks }) => {
                         ))
                     )}
                 </Row>
-                {banks && banks.length >= visibleBanks && ( // Show "Show More" button if there are more banks
+                {data.banks && data.banks.length >= visibleBanks && ( // Show "Show More" button if there are more data.banks
                 //    <AnimatedSection transitionType="animate__fadeIn">
                     <Row className="justify-content-center">
                     

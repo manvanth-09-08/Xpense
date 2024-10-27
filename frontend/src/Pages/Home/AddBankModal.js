@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import { addBankAccount, deleteBankAccount, updateBankDetails } from "../../utils/FetchApi";
 import { ToastContainer, toast } from "react-toastify";
+import { AppContext } from "../../components/Context/AppContext";
 
 
 export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose, editingBankName, editingBankBalance, refresh, setRefresh }) => {
 
-  const [banks, setBanks] = useState(null);
-  const [show, setShow] = useState(false);
+  const {data,dispatch} = useContext(AppContext);
   const [email, setEmail] = useState(null)
 
   const [bankName, setBankName] = useState(editingBankName);
@@ -31,7 +31,7 @@ export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose, e
 
   const resetBankDetails = () => {
     setBankName("");
-    setBankBalance(0);
+    setBankBalance(null);
     setIndex(null);
   }
 
@@ -39,7 +39,7 @@ export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose, e
     const enteredBankName = e.target.value.trim().toLowerCase(); // Trim and normalize case for comparison
 
     // Check if the bank name already exists
-    const bankExists = banks && banks.some((bank) => bank.bankName.toLowerCase() === enteredBankName);
+    const bankExists = data.banks && data.banks.some((bank) => bank.bankName.toLowerCase() === enteredBankName);
 
     if (bankExists) {
       setNameAlreadyExistsError(true);  // Set error state if the name already exists
@@ -54,44 +54,13 @@ export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose, e
     setBankBalance(e.target.value)
   }
 
-  const handleAddBankBtnOpen = () => {
-    resetBankDetails();
-    setShow(true)
-  }
 
 
-
-
-
-  const handleBankAccountClick = (bankName, accountBalance, index) => {
-    console.log(index)
-    setBankName(bankName);
-    setBankBalance(accountBalance);
-    setIndex(index)
-  }
 
   const handleUpdate = async()=>{
     try{
-      console.log("inside responseData")
       const responseData = await updateBankDetails(email,bankName,bankBalance, editingBankName)
-      console.log("inside responseData")
       if(responseData.success){
-        console.log("inside responseData")
-        const user = JSON.parse(localStorage.getItem("user"));
-        let bankAccount = user.bankAccount;
-        bankAccount = bankAccount.map((bank)=>{
-          if(bank.bankName === editingBankName){
-              bank.bankName = bankName;
-              bank.accountBalance = bankBalance;
-          }
-          return bank;
-      })
-      const userAux = { ...user, bankAccount: bankAccount }
-        localStorage.setItem("user", JSON.stringify(userAux));
-
-        resetBankDetails();
-        handleAddNewBankAccountClose();
-        fetchBanks();
         toast.success(responseData.message, toastOptions);
         setRefresh(!refresh)
       }else {
@@ -106,19 +75,13 @@ export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose, e
     try {
       const responseData = await addBankAccount(email, bankName, bankBalance)
       if (responseData.success) {
-        const user = JSON.parse(localStorage.getItem("user"));
-        let bankAccount = user.bankAccount;
-        bankAccount.push({ bankName: bankName, accountBalance: bankBalance })
-        const userAux = { ...user, bankAccount: bankAccount }
-        localStorage.setItem("user", JSON.stringify(userAux));
-
+        dispatch({type:"addBankAccount",payload:{bankName,bankBalance}});
         resetBankDetails();
         handleAddNewBankAccountClose();
-        fetchBanks();
+        dispatch({type:"reload"})
         toast.success(responseData.message, toastOptions);
       } else {
         toast.error(responseData.message, toastOptions);
-        console.log("hehehehehe")
       }
 
     } catch (err) {
@@ -127,16 +90,17 @@ export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose, e
   }
 
   const fetchBanks = () => {
+    console.log("dataaaaa --> ",data)
     if (localStorage.getItem("user")) {
       const user = JSON.parse(localStorage.getItem("user"));
-      setBanks(user.bankAccount)
       setEmail(user.email)
     }
+
   }
 
   useEffect(() => {
     fetchBanks();
-  }, [localStorage.getItem("user")])
+  }, [dispatch])
 
   return (
     <Modal show={showAddBankModal} onHide={handleAddNewBankAccountClose} centered>

@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Container, Table } from "react-bootstrap";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { deleteBankAccount } from "../../utils/FetchApi";
 import { ToastContainer, toast } from "react-toastify";
 import { AddBankModal } from "../Home/AddBankModal";
+import { AppContext } from "../../components/Context/AppContext";
 
 export const Bank =(props)=>{
-    const [banks,setBanks] = useState(null);
+    const {data,dispatch} = useContext(AppContext);
     const [email,setEmail] = useState(null);
     const [editBank,setEditBank] =useState(false)
 
@@ -41,12 +42,7 @@ export const Bank =(props)=>{
             console.log(email,bankName,bankBalance,index)
             const responseData = await deleteBankAccount(email,bankName,bankBalance,index)
             if(responseData.success){
-                const user = JSON.parse(localStorage.getItem("user"));
-                let bankAccount = user.bankAccount;
-                bankAccount.splice( bankAccount.findIndex((bank)=>bank.bankName===bankName),1)
-                const userAux = {...user, bankAccount : bankAccount}
-                localStorage.setItem("user",JSON.stringify(userAux));
-                setBanks(bankAccount);
+                dispatch({type:"deleteBankAccount", payload:bankName})
                 toast.success(responseData.message, toastOptions);
             }else{
                 toast.error(responseData.message, toastOptions);
@@ -59,10 +55,8 @@ export const Bank =(props)=>{
 
     useEffect(()=>{
         const user = JSON.parse(localStorage.getItem("user"));
-        console.log(user.bankAccount)
-        setBanks(user.bankAccount);
         setEmail(user.email);
-    },[localStorage.getItem("user")])
+    },[dispatch, data.reload])
 
     return(
         <Container >
@@ -75,8 +69,8 @@ export const Bank =(props)=>{
                     </tr>
                 </thead>
                 <tbody>
-                    {console.log(banks)}
-                    {banks && banks.map((bank,index)=> { 
+                    {console.log(data.banks)}
+                    {data.banks && data.banks.map((bank,index)=> { 
                         return (<tr key={index}>
                             <td>{bank.bankName}</td>
                             <td>{bank.accountBalance}</td>

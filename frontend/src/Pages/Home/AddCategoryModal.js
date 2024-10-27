@@ -1,17 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import { addBankAccount, addCategory, deleteBankAccount, updateCategory } from "../../utils/FetchApi";
 import { ToastContainer, toast } from "react-toastify";
+import { AppContext } from "../../components/Context/AppContext";
 
 
 
 export const AddCategoryModal = (props)=>{
 
+  const {data,dispatch} =useContext(AppContext)
     const [categories, setCategories] = useState(null);
+    
     const [show,setShow] = useState(false);
     const [email,setEmail] = useState(null)
 
     const [category,setCategory] = useState(props.update?props.category.category :"");
+    const [budget,setBudget] = useState(null)
+    const [defaultBankAccount,setDefaultBankAccount] = useState(null)
 
     const [index,setIndex] = useState(null);
     const [nameAlreadyExistsError, setNameAlreadyExistsError] = useState(false)
@@ -34,6 +39,10 @@ export const AddCategoryModal = (props)=>{
     const resetCategory = ()=>{
         setCategory("");
         setIndex(null);
+    }
+
+    const handleInputChange = (setVariable,e)=>{
+      setVariable(e.target.value)
     }
 
     const handleCategoryNameChange = (e)=>{
@@ -140,6 +149,20 @@ export const AddCategoryModal = (props)=>{
               <p style={{ color: 'red' }}>Category already exists!</p>
             )}
                       </Form.Group>
+                    
+
+                      <Form.Group className="mb-3" controlId="formName">
+                        <Form.Label>Category Budget</Form.Label>
+                        <Form.Control
+                          name="budget"
+                          type="number"
+                          placeholder="Enter Budget for this category if exists"
+                          value={budget}
+                          onChange={(e) => {handleInputChange(setBudget,e)}}
+                        />
+                        
+                      </Form.Group>
+
 
 
                       

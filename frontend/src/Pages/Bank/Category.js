@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Col, Container, Row, Table } from "react-bootstrap";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { deleteCategory } from "../../utils/FetchApi";
 import { ToastContainer, toast } from "react-toastify";
 import { AddCategoryModal } from "../Home/AddCategoryModal";
+import { AppContext } from "../../components/Context/AppContext";
 
 export const Category =(props)=>{
+    const {data,dispatch} = useContext(AppContext)
     const [categories,setCategories] = useState(null);
     const [email,setEmail] = useState(null)
     const [addCategoryShow, setAddCategoryShow] = useState(false);
