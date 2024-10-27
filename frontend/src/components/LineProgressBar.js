@@ -66,10 +66,10 @@ const PieChartComponent = ({ transactions, tranasactionTypes }) => {
                   
               })),
              
-              cx: "60%",
-              cy: "60%",
+              cx: "80%",
+              cy: "30%",
               arcLabel: (item) => `${item.label}`,
-                  arcLabelMinAngle: 25,
+                  arcLabelMinAngle: 35,
           },
       ]}
       sx={{
@@ -79,6 +79,13 @@ const PieChartComponent = ({ transactions, tranasactionTypes }) => {
       }}
        width={250}
       height={250}
+      slotProps={{
+        legend: {
+          direction: 'row',
+          position: { vertical: 'bottom', horizontal: 'middle' },
+          padding: 0,
+        },
+      }}
       
         >
 

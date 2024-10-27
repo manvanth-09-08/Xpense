@@ -47,6 +47,13 @@ const userSchema = new mongoose.Schema({
             category: {
                 type: String,
                 required: true,
+            },
+            budget:{
+                type:Number,
+            },
+            limitUtilised :{
+                type:Number,
+                default:0,
             }
         }],
         default: [

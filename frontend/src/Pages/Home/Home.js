@@ -234,7 +234,7 @@ const Home = () => {
 
   return (
     <>
-      <Header view={view} setBankShow={setBankShow} setCategoryShow={setCategoryShow} handleAddIncome={handleAddIncome} handleAddExpense={handleAddExpense} handleTableClick={handleTableClick} handleChartClick={handleChartClick} />
+      <Header  view={view} setBankShow={setBankShow} setCategoryShow={setCategoryShow} handleAddIncome={handleAddIncome} handleAddExpense={handleAddExpense} handleTableClick={handleTableClick} handleChartClick={handleChartClick} />
 
       {data.loading ? (
         <>
@@ -333,7 +333,7 @@ const Home = () => {
               <>
                 {console.log("hehehe")}
                 <Banks banks={banks}></Banks>
-                <TableData data={transactions} user={cUser} banks={banks} />
+                <TableData data={transactions} user={cUser} banks={banks} frequency={frequency} setFrequency={setFrequency}/>
               </>
             ) : (
               <>

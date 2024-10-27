@@ -41,6 +41,7 @@ export const AddCategoryModal = (props)=>{
 
     const handleInputChange = (setVariable,e)=>{
       setVariable(e.target.value)
+      console.log(budget)
     }
 
     const handleCloseModal = ()=>{
@@ -67,7 +68,7 @@ export const AddCategoryModal = (props)=>{
     const handleUpdate = async()=>{
       const updatedCategory = category;
       try{
-        const responseData = await updateCategory(email,category, data.editValues.category.category)
+        const responseData = await updateCategory(email,category, data.editValues.category.category,budget)
             if(responseData.success){                       
               handleCloseModal()
                 toast.success(responseData.message, toastOptions);
@@ -86,9 +87,9 @@ export const AddCategoryModal = (props)=>{
 
     const handleSubmit= async()=>{
         try{
-            const responseData = await addCategory(email,category)
+            const responseData = await addCategory(email,category,budget)
             if(responseData.success){
-                dispatch({type:"addCategory", payload : category})
+                dispatch({type:"categories", payload : responseData.categories})
                 resetCategory();                
                 handleCloseModal();
                 toast.success(responseData.message, toastOptions);
@@ -116,6 +117,7 @@ export const AddCategoryModal = (props)=>{
     useEffect(() => {
       if (data.editValues && data.editValues.edit) {
         setCategory(data.editValues.category.category);
+        setBudget(data.editValues.category.budget)
       }
     }, [data.editValues]);
 

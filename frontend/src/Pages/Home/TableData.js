@@ -24,6 +24,7 @@ const TableData = (props) => {
   const [bankUniqueValues, setBankUniqueValues] = useState(null)
   const [categoryUniqueValues, setCategoryUniqueValues] = useState(null)
 
+  const [dateFilter, setDateFilter] =useState(false);
   const [typeFilter, setTypeFilter] = useState(false);
   const [bankFilter, setBankFilter] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState(false);
@@ -155,6 +156,15 @@ const TableData = (props) => {
     setCategoryFilter(false);
   }
 
+  const handleChangeFrequency = (frequency)=>{
+    props.setFrequency(frequency);
+  }
+
+  const handleClearDateFilter = ()=>{
+    props.setFrequency("7");
+    setDateFilter(false);
+  }
+
 
   const setBankAccounts = () => {
     console.log("props : ", props)
@@ -184,14 +194,28 @@ const TableData = (props) => {
           <thead>
             <tr>
               <th><div className="dropdown">
-                <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}><th>Date</th></button>
+                <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}><th>Date</th>
+                {props.frequency!=="7" && (
+                    <span
+                      onClick={() => handleClearDateFilter()}
+                      style={{ marginLeft: '8px', cursor: 'pointer', color: 'red' }}
+                    >
+                      X
+                    </span>
+                  )}
+                </button>
                 <div className="dropdown-content">
                   <a onClick={() => { handleSorting('date', 'ascending') }}>Sort Ascending</a>
                   <a onClick={() => { handleSorting('date', 'descending') }}>Sort Descending</a>
+                  <a onClick={()=> {handleChangeFrequency("30")}}>Last 30 days</a>
+                  <a onClick={()=> {handleChangeFrequency("custom")}}>Custom</a>
                 </div>
               </div></th>
               <th><div className="dropdown">
-                <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}><th>Title</th></button>
+                <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}><th>Title</th>
+               
+                </button>
+                
                 <div className="dropdown-content">
                   <a onClick={() => { handleSorting('title', 'ascending') }}>Sort Ascending</a>
                   <a onClick={() => { handleSorting('title', 'descending') }}>Sort Descending</a>

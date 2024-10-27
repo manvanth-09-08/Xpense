@@ -49,7 +49,7 @@ export const appReducer = (state,action)=>{
 
         case "addCategory" :{
             let categories = state.categories;
-            categories.push({category : action.payload})
+            categories.push({category : action.payload.category,budget:action.payload.budget})
             return{
                 ...state,
                 categories:categories,

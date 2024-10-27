@@ -77,10 +77,10 @@ export const deleteCategory= async(email,category,index)=>{
     }
 }
 
-export const addCategory = async(email, category)=>{
+export const addCategory = async(email, category,budget)=>{
     try{
         const {data} = await axios.post(addNewCategory,{
-            email, category
+            email, category, budget
         });
         return data;
     }catch(err){
@@ -89,10 +89,10 @@ export const addCategory = async(email, category)=>{
     }
 }
 
-export const updateCategory = async(email, category, previousCategoryName) =>{
+export const updateCategory = async(email, category, previousCategoryName,budget) =>{
     try{
         const {data} = await axios.post(updateExistingCategory,{
-            email, categoryName:category,previousCategoryName
+            email, categoryName:category,previousCategoryName,budget
         });
         return data;
     }catch(err){

@@ -14,7 +14,6 @@ export const addTransactionController = async (req, res) => {
       index,
     } = req.body;
 
-    console.log("transsss : ", title, amount, date, category, userId, transactionType, index);
 
     if (
       !title ||
@@ -62,10 +61,23 @@ export const addTransactionController = async (req, res) => {
       updatedBankAccount = { ...bankAccount, accountBalance: parseInt(bankAccount.accountBalance) + parseInt(amount) }
 
     } else {
+      const categories = user.categories;
+      const updatedCategory = categories.map((userCategory) => {
+        if (userCategory.category === category) {
+          if (userCategory.budget) {
+            userCategory.limitUtilised =parseInt(userCategory.limitUtilised) + parseInt(amount);
+          }
+        }
+        return userCategory;
+      })
+      user.categories = updatedCategory;
       updatedBankAccount = { ...bankAccount, accountBalance: parseInt(bankAccount.accountBalance) - parseInt(amount) }
     }
     user.bankAccount[index] = updatedBankAccount;
-    user.save();
+
+
+    user.markModified('categories')
+    await user.save();
 
     return res.status(200).json({
       success: true,
@@ -158,11 +170,26 @@ export const deleteTransactionController = async (req, res) => {
       });
     }
 
+   
+    if (transactionElement && isSameMonth(transactionElement.date)) {
+      
+      const auxCategory = user.categories.map((category)=>{
+        if(category.category === transactionElement.category)
+          category.limitUtilised = parseInt(category.limitUtilised) - parseInt(transactionElement.amount);
+        return category;
+      })
+      user.categories = auxCategory;
+    }
+
     const transactionArr = user.transactions.filter(
       (transaction) => transaction._id === transactionId
     );
+    
 
     user.transactions = transactionArr;
+
+    user.markModified('categories');
+    user.markModified('transactions');
 
     user.save();
 
@@ -173,6 +200,7 @@ export const deleteTransactionController = async (req, res) => {
       message: `Transaction successfully deleted`,
     });
   } catch (err) {
+    console.log("inside error")
     return res.status(401).json({
       success: false,
       messages: err.message,
@@ -212,6 +240,97 @@ export const updateTransactionController = async (req, res) => {
         success: false,
         message: "transaction not found",
       });
+    }
+
+    if(transactionElement.category != category){
+      if(transactionElement.transactionType===transactionType && transactionType === "Expense"){
+          const auxCategoryList = user.categories.map((categoryUser)=>{
+            if(categoryUser.category === transactionElement.category){
+              categoryUser.limitUtilised = parseInt(categoryUser.limitUtilised) - parseInt(transactionElement.amount);
+            }else if(categoryUser.category === category){
+              categoryUser.limitUtilised = parseInt(categoryUser.limitUtilised) + parseInt(amount);
+            }
+            return categoryUser
+          })
+
+          user.categories = auxCategoryList;
+
+          user.markModified('categories')
+          await user.save();
+        }else{
+          if(transactionType==="Expense"){
+            const auxCategoryList = user.categories.map((categoryUser)=>{
+              if(categoryUser.category === category){
+                categoryUser.limitUtilised = parseInt(categoryUser.limitUtilised) + parseInt(amount);
+              }
+              return categoryUser
+            })
+  
+            user.categories = auxCategoryList;
+  
+            user.markModified('categories')
+            await user.save();
+          }else{
+            const auxCategoryList = user.categories.map((categoryUser)=>{
+              if(categoryUser.category === transactionElement.category){
+                categoryUser.limitUtilised = parseInt(categoryUser.limitUtilised) - parseInt(transactionElement.amount);
+              }
+              return categoryUser
+            })
+  
+            user.categories = auxCategoryList;
+  
+            user.markModified('categories')
+            await user.save();
+          }
+        }
+      
+    }else{
+      if(transactionElement.transactionType !== transactionType){
+        if(transactionType === "Credit"){
+          const auxCategoryList = user.categories.map((categoryUser)=>{
+            if(categoryUser.category === transactionElement.category){
+              categoryUser.limitUtilised = parseInt(categoryUser.limitUtilised) - parseInt(transactionElement.amount);
+            }
+            return categoryUser
+          })
+
+          user.categories = auxCategoryList;
+
+          user.markModified('categories')
+          await user.save();
+        }else{
+          const auxCategoryList = user.categories.map((categoryUser)=>{
+            if(categoryUser.category === transactionElement.category){
+              categoryUser.limitUtilised = parseInt(categoryUser.limitUtilised) + parseInt(amount);
+            }
+            return categoryUser
+          })
+
+          user.categories = auxCategoryList;
+
+          user.markModified('categories')
+          await user.save();
+        }
+
+      }else{
+        if(transactionType==="Expense"){
+          if(transactionElement.amount !== amount){
+            const auxCategoryList = user.categories.map((categoryUser)=>{
+              if(categoryUser.category === transactionElement.category){
+                categoryUser.limitUtilised = parseInt(categoryUser.limitUtilised) - parseInt(transactionElement.amount);
+                categoryUser.limitUtilised = parseInt(categoryUser.limitUtilised) + amount;
+              }
+              return categoryUser
+            })
+  
+            user.categories = auxCategoryList;
+  
+            user.markModified('categories')
+            await user.save();
+          }
+        }
+      }
     }
 
     let amountChanged = 0;
@@ -355,3 +474,13 @@ const saveBankDetailsUpdate = async (bankAccountToBeChanged, user) => {
     console.log("error : ", err)
   }
 }
+
+const isSameMonth = (inputDate) => {
+  const dateToCheck = new Date(inputDate);
+  const currentDate = new Date();
+
+  return (
+    dateToCheck.getFullYear() === currentDate.getFullYear() &&
+    dateToCheck.getMonth() === currentDate.getMonth()
+  );
+};

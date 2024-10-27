@@ -275,7 +275,7 @@ export const getBankDetails = async (req, res) => {
 
 export const addCategory = async (req, res) => {
     try {
-        const { email, category } = req.body;
+        const { email, category, budget } = req.body;
         if (!email || !category) {
             return res.status(400).json({
                 success: false,
@@ -291,11 +291,11 @@ export const addCategory = async (req, res) => {
                 message: "User not found",
             });
         }
-
-        user.categories.push({ category })
+        console.log("budget : ",budget)
+        user.categories.push({ category, budget })
         user.save();
 
-        return res.status(200).json({ success: true, message: "Category added successfully" })
+        return res.status(200).json({ success: true, message: "Category added successfully", categories:user.categories })
     } catch (err) {
         return res.status(500).json({ success: false, message: "Internal server error" })
     }
@@ -334,7 +334,7 @@ export const deleteCategory = async(req,res)=>{
 
 export const updateCategory = async(req,res)=>{
     try{
-        const {categoryName,previousCategoryName, email} = req.body;
+        const {categoryName,previousCategoryName, email, budget} = req.body;
         if (!categoryName || !previousCategoryName) {
             return res.status(400).json({
                 success: false,
@@ -360,11 +360,14 @@ export const updateCategory = async(req,res)=>{
 
         user.categories = user.categories.map((category)=>{
             console.log(category.category, categoryName, category.category == categoryName)
-            if(category.category === previousCategoryName)
+            if(category.category === previousCategoryName){
                 category.category = categoryName;
+                category.budget = budget || category.budget;
+            }
+                
             return category;
         })
-
+        user.markModified('categories'); 
         let transactions = await Transaction.find({user:user._id})
        
         for (let transaction of transactions) {
