@@ -71,7 +71,6 @@ const TableData = (props) => {
   }
 
   const handleDeleteClick = async (itemKey) => {
-    console.log(user._id);
     console.log("Clicked button ID delete:", itemKey);
     setCurrId(itemKey);
     const { data } = await axios.post(`${deleteTransactions}/${itemKey}`, {

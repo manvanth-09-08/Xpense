@@ -81,12 +81,11 @@ export const loginControllers = async (req, res, next) => {
             });
         }
 
-        delete user.password;
 
         return res.status(200).json({
             success: true,
             message: `Welcome back, ${user.name}`,
-            user,
+            user:{_id:user._id,email:user.email,isAvatarImageSet:user.isAvatarImageSet,avatarImage:user.avatarImage},
         });
 
     }

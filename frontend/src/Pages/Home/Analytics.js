@@ -9,7 +9,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import PieChartComponent from "../../components/LineProgressBar";
 
 
-const Analytics = ({ transactions, user }) => {
+const Analytics = ({ transactions }) => {
   const TotalTransactions = transactions.length;
   const totalIncomeTransactions = transactions.filter(
     (item) => item.transactionType === "Credit"
@@ -38,7 +38,7 @@ const Analytics = ({ transactions, user }) => {
 
   const TurnOverIncomePercent = (totalTurnOverIncome / totalTurnOver) * 100;
   const TurnOverExpensePercent = (totalTurnOverExpense / totalTurnOver) * 100;
-  console.log("cUser : ",user)
+
   // const categories = 
 
   let categories = transactions && transactions.map((transaction) => { return transaction.category });

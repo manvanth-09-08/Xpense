@@ -9,7 +9,6 @@ import { AppContext } from "../../components/Context/AppContext";
 export const AddCategoryModal = (props)=>{
 
   const {data,dispatch} =useContext(AppContext)
-    const [categories, setCategories] = useState(null);
     
     const [show,setShow] = useState(false);
     const [email,setEmail] = useState(null)
@@ -106,7 +105,6 @@ export const AddCategoryModal = (props)=>{
     const fetchCategories = ()=>{
         if(localStorage.getItem("user")){
         const user = JSON.parse(localStorage.getItem("user"));
-        setCategories(user.categories)
         setEmail(user.email)
         }
     }
@@ -148,7 +146,7 @@ export const AddCategoryModal = (props)=>{
                         <Form.Control
                           name="budget"
                           type="number"
-                          placeholder="Enter Budget for this category if exists"
+                          placeholder="Enter Budget for this category"
                           value={budget}
                           onChange={(e) => {handleInputChange(setBudget,e)}}
                         />

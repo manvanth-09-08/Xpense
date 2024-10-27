@@ -502,7 +502,7 @@ const Home = () => {
               </>
             ) : (
               <>
-                <Analytics transactions={transactions} user={cUser} />
+                <Analytics transactions={transactions}/>
               </>
             )}
             <ToastContainer />
