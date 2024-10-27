@@ -1,28 +1,92 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { PieChart,pieArcLabelClasses } from '@mui/x-charts/PieChart';
 
-const LineProgressBar = ({ label, percentage, lineColor }) => {
+
+const PieChartComponent = ({ transactions, tranasactionTypes }) => {
+
+  const [transactionList,setTransactionList] = useState([])
+
+  function getSameTransactionList(arr) {
+
+    const filteredList = transactions.filter((value) => {
+
+      if (value.transactionType === tranasactionTypes) {
+          return true; // Keep this item
+      }
+      return false; // Exclude this item
+  });
+
+  console.log(filteredList);
+  return filteredList;
+  }
+
+  const calculateCategoryTotals = (transactions) => {
+
+    const categoryTotals = transactions.reduce((acc, transaction) => {
+      
+      const { category, amount } = transaction;
+      if (acc[category] ) {
+        acc[category] += amount;
+      } else {
+        acc[category] = amount;
+      }
+      
+    
+    return acc;
+    }, {});
+  
+    const formattedTotals = Object.keys(categoryTotals).map(category => ({
+      category,
+      amount: categoryTotals[category],
+  }));
+
+  return formattedTotals;
+  };
+
+  const setTransactionsCategory = ()=>{
+    let sameTransactionList = getSameTransactionList(transactions);
+    setTransactionList(calculateCategoryTotals(sameTransactionList))
+  }
+  
+  useEffect(()=>{
+    setTransactionsCategory();
+  },[])
+
+
   return (
-    <div className="container">
-      <div className="d-flex justify-content-between align-items-center mb-2">
-        <span>{label}</span>
-        <span>{percentage}%</span>
-      </div>
-      <div className="progress" style={{ height: '24px' }}>
-        <div
-          className="progress-bar"
-          role="progressbar"
-          style={{
-            width: `${percentage}%`,
-            backgroundColor: lineColor,
-            transition: 'width 1s ease-in-out',
-          }}
-          aria-valuenow={percentage}
-          aria-valuemin="0"
-          aria-valuemax="100"
-        ></div>
-      </div>
+    <div className="d-flex flex-column align-items-center">
+      {transactionList && transactionList.length!==0 ?
+        <PieChart 
+        series={[
+          {
+              data: transactionList.map((item) => ({
+                  id: item.category,
+                  value: item.amount,
+                  label:item.category,
+                  
+              })),
+             
+              cx: "60%",
+              cy: "60%",
+              arcLabel: (item) => `${item.label}`,
+                  arcLabelMinAngle: 25,
+          },
+      ]}
+      sx={{
+        [`& .${pieArcLabelClasses.root}`]: {
+          // fontWeight: 'bold',
+        },
+      }}
+       width={250}
+      height={250}
+      
+        >
+
+        </PieChart>:
+        `No ${tranasactionTypes} transaction` 
+}
     </div>
   );
 };
 
-export default LineProgressBar;
+export default PieChartComponent;

@@ -2,11 +2,11 @@ import React from "react";
 // import CardBox from "./CardBox";
 import { Container, Row } from "react-bootstrap";
 import CircularProgressBar from "../../components/CircularProgressBar";
-import LineProgressBar from "../../components/LineProgressBar";
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 // import MovingIcon from '@mui/icons-material/Moving';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import PieChartComponent from "../../components/LineProgressBar";
 
 
 const Analytics = ({ transactions, user }) => {
@@ -128,22 +128,10 @@ const Analytics = ({ transactions, user }) => {
                 <span style={{ fontWeight: "bold" }}>Categorywise Income</span>{" "}
               </div>
               <div className="card-body">
-                {categories.map(category => {
-                  const income = transactions.filter(transaction => transaction.transactionType === "Credit" && transaction.category === category).reduce((acc, transaction) => acc + transaction.amount, 0)
-                  
-                  const incomePercent = (income/ totalTurnOver) * 100;
+              
+                      <PieChartComponent  transactions={transactions} tranasactionTypes="Credit"/>
 
- 
 
-                  return(
-                    <>
-                    {income > 0 &&
-                      (<LineProgressBar label={category} percentage={incomePercent.toFixed(0)}  />)
-
-                    }
-                    </>
-                  )
-                })}
               </div>
             </div>
           </div>
@@ -154,21 +142,10 @@ const Analytics = ({ transactions, user }) => {
                 <span style={{ fontWeight: "bold" }}>Categorywise Expense</span>{" "}
               </div>
               <div className="card-body">
-                {categories.map(category => {
-                  const expenses = transactions.filter(transaction => transaction.transactionType === "Expense" && transaction.category === category).reduce((acc, transaction) => acc + transaction.amount, 0)
-                  
-                  const expensePercent = (expenses/ totalTurnOver) * 100;
+               
+                    <PieChartComponent  transactions={transactions} tranasactionTypes="Expense"/>
 
 
-                  return(
-                    <>
-                    {expenses > 0 &&
-                      (<LineProgressBar label={category} percentage={expensePercent.toFixed(0)}/>)
-
-                    }
-                    </>
-                  )
-                })}
               </div>
             </div>
           </div>
