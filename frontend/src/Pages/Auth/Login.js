@@ -1,5 +1,5 @@
 // LoginPage.js
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
@@ -8,11 +8,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { logIn } from "../../utils/FetchApi";
+import { AppContext } from "../../components/Context/AppContext";
 
 const Login = () => {
+  const {data,dispatch} =useContext(AppContext)
   const navigate = useNavigate();
-
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (localStorage.getItem("user")) {
@@ -45,7 +45,7 @@ const Login = () => {
 
     const { email, password } = values;
 
-    setLoading(true);
+    dispatch({type:"loading",payload:true})
     try {
       const responseData = await logIn(email, password);
       console.log("resp : ", responseData);
@@ -57,7 +57,7 @@ const Login = () => {
       } else {
         toast.error(responseData.message, toastOptions);
       }
-      setLoading(false);
+      dispatch({type:"loading",payload:false})
 
     } catch (err) {
       console.log(err)
@@ -195,10 +195,10 @@ const Login = () => {
                 <Button
                   type="submit"
                   className=" text-center mt-3 btnStyle"
-                  onClick={!loading ? handleSubmit : null}
-                  disabled={loading}
+                  onClick={!data.loading ? handleSubmit : null}
+                  disabled={data.loading}
                 >
-                  {loading ? "Signin…" : "Login"}
+                  {data.loading ? "Signin…" : "Login"}
                 </Button>
 
                 <p className="mt-3" style={{ color: "#9d9494" }}>

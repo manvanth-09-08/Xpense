@@ -1,5 +1,5 @@
 // SignupPage.js
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import "./auth.css";
 import Particles from "react-tsparticles";
@@ -10,10 +10,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { registerAPI } from "../../utils/ApiRequest";
 import axios from "axios";
+import { AppContext } from "../../components/Context/AppContext";
 
 const Register = () => {
-
-  const [loading, setLoading] = useState(false);
+  const{data,dispatch} = useContext(AppContext)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const Register = () => {
 
       const {name, email, password} = values;
 
-      setLoading(false);
+      dispatch({type:"loading",payload:true})
      
       const {data} = await axios.post(registerAPI, {
         name,
@@ -70,12 +70,12 @@ const Register = () => {
         delete data.user.password;
         localStorage.setItem("user", JSON.stringify(data.user));
         toast.success(data.message, toastOptions);
-        setLoading(true);
+        dispatch({type:"loading",payload:true})
         navigate("/");
       }
       else{
         toast.error(data.message, toastOptions);
-        setLoading(false);
+        dispatch({type:"loading",payload:false})
       }
     };
 
@@ -177,10 +177,10 @@ const Register = () => {
               <Button
                   type="submit"
                   className=" text-center mt-3 btnStyle"
-                  onClick={!loading ? handleSubmit : null}
-                  disabled={loading}
+                  onClick={!data.loading ? handleSubmit : null}
+                  disabled={data.loading}
                 >
-                  {loading ? "Registering..." : "Signup"}
+                  {data.loading ? "Registering..." : "Signup"}
                 </Button>
 
               <p className="mt-3" style={{color: "#9d9494"}}>Already have an account? <Link to="/login" className="text-white lnk" >Login</Link></p>

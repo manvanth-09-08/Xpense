@@ -42,7 +42,6 @@ const Home = () => {
 
   const [cUser, setcUser] = useState();
   const [show, setShow] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [frequency, setFrequency] = useState("7");
@@ -192,7 +191,7 @@ const Home = () => {
     ) {
       toast.error("Please enter all the fields", toastOptions);
     }
-    setLoading(true);
+    dispatch({type:"loading",payload:true})
     try {
       const { data } = await axios.post(addTransaction, {
         title: title,
@@ -215,13 +214,11 @@ const Home = () => {
 
 
 
-      // setLoading(false);
-
     } catch (err) {
 
 
       console.log(err)
-      setLoading(false);
+      dispatch({type:"loading",payload:false})
       toast.error(err.response.data.message, toastOptions);
 
     }
@@ -239,7 +236,7 @@ const Home = () => {
 
   const fetchAllTransactions = async () => {
     try {
-      setLoading(true);
+      dispatch({type:"loading",payload:true})
       console.log(cUser._id, frequency, startDate, endDate, type);
       await setBankAndCategories();
       const { data } = await axios.post(getTransactions, {
@@ -258,10 +255,10 @@ const Home = () => {
       // setCategories(JSON.parse(localStorage.getItem("user")).categories);
       // dispatch({type:"categories" , payload:categories})
       console.log("categorye : ", categories)
-      setLoading(false);
+      dispatch({type:"loading",payload:false})
     } catch (err) {
       // toast.error("Error please Try again...", toastOptions);
-      setLoading(false);
+      dispatch({type:"loading",payload:false})
     }
   };
 
@@ -286,7 +283,7 @@ const Home = () => {
     <>
       <Header view={view} setBankShow={setBankShow} setCategoryShow={setCategoryShow} handleAddIncome={handleAddIncome} handleAddExpense={handleAddExpense} handleTableClick={handleTableClick} handleChartClick={handleChartClick} />
 
-      {loading ? (
+      {data.loading ? (
         <>
           <Spinner />
         </>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -10,6 +10,7 @@ import { Button } from "react-bootstrap";
 import { setAvatarAPI } from "../../utils/ApiRequest.js";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
+import { AppContext } from "../../components/Context/AppContext.jsx";
 
 // import Buffer from "buffer";
 const {
@@ -54,9 +55,8 @@ const SetAvatar = () => {
   };
 
   const navigate = useNavigate();
-
+  const {data,dispatch} =useContext(AppContext);
   const [selectedAvatar, setSelectedAvatar] = useState(undefined);
-  const [loading, setLoading] = useState(false);
   const [selectedSprite, setSelectedSprite] = React.useState(sprites[0]);
 
   useEffect(() => {
@@ -85,7 +85,7 @@ const SetAvatar = () => {
   const handleSpriteChange = (e) => {
     setSelectedSprite(() => {
       if (e.target.value.length > 0) {
-        setLoading(true);
+        dispatch({type:"loading",payload:true})
         const imgData = [];
         for (let i = 0; i < 4; i++) {
           imgData.push(
@@ -97,7 +97,7 @@ const SetAvatar = () => {
 
         setImgURL(imgData);
         // console.log(imgData);
-        setLoading(false);
+        dispatch({type:"loading",payload:false})
       }
 
       return e.target.value;
@@ -206,7 +206,7 @@ const SetAvatar = () => {
           }}
         />
 
-        {loading === true ? (
+        {data.loading === true ? (
           <>
             {/* <Container></Container> */}
             <div
@@ -215,7 +215,7 @@ const SetAvatar = () => {
               style={{ position: "relative", zIndex: "2 !important" }}
             >
               <div className="avatarBox">
-                <image src={spinner} alt="Loading"></image>
+                <image src={spinner} alt="data.loading"></image>
               </div>
             </div>
           </>
