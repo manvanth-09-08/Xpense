@@ -6,6 +6,7 @@ export const appState = {
     loading:false,
     addCategoryModal : false,
     addBankModal : false,
+    transactionModalVisibility : false,
     editValues:null,
     reload:false,
     fullAppRefresh :false,
@@ -62,6 +63,8 @@ export const appReducer = (state,action)=>{
         case "addCategoryModal" : return {...state,addCategoryModal:action.payload};
 
         case "addBankModal" : return {...state,addBankModal:action.payload};
+
+        case "transactionModalVisibility" :return {...state,transactionModalVisibility:action.payload}
 
         case "editDetails" : return{...state,editValues:action.payload }
 

@@ -23,6 +23,7 @@ import { Category } from "../Bank/Category";
 import { AddCategoryModal } from "./AddCategoryModal";
 import AnimatedSection from "../../utils/AnimatedSection";
 import { AppContext } from "../../components/Context/AppContext";
+import ModelForm from "./ModelForm";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -127,6 +128,11 @@ const Home = () => {
     selectedBank: 0,
   });
 
+  const handleChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+    console.log(e.target.value, values)
+  };
+
   const handleAddNewBankAccount = () => {
     dispatch({type:"addBankModal", payload:true})
   }
@@ -145,10 +151,7 @@ const Home = () => {
 
 
 
-  const handleChange = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
-    console.log(e.target.value, values)
-  };
+
 
   const handleResetButtonVisibility = () => {
     if (type === "all" && frequency === "7")
@@ -174,55 +177,7 @@ const Home = () => {
     // fetchBanks();
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const { title, amount, category, date, selectedBank } =
-      values;
-
-    if (
-      !title ||
-      !amount ||
-      !category ||
-      !date ||
-      !selectedBank
-    ) {
-      toast.error("Please enter all the fields", toastOptions);
-    }
-    dispatch({type:"loading",payload:true})
-    try {
-      const { data } = await axios.post(addTransaction, {
-        title: title,
-        amount: amount,
-        category: category,
-        date: date,
-        transactionType: typeOfTransaction,
-        userId: cUser._id,
-        index: selectedBank,
-      });
-
-      if (data.success === true) {
-        toast.success(data.message, toastOptions);
-        handleClose();
-        fetchAllTransactions();
-        setRefresh(!refresh);
-      }
-
-
-
-
-
-    } catch (err) {
-
-
-      console.log(err)
-      dispatch({type:"loading",payload:false})
-      toast.error(err.response.data.message, toastOptions);
-
-    }
-
-
-  };
+  
 
   const handleReset = () => {
     setType("all");
@@ -295,131 +250,11 @@ const Home = () => {
             <div className="filterRow">
              
 
-
-              {/* <div className="text-white iconBtnBox">
-                <FormatListBulletedIcon
-                  sx={{ cursor: "pointer" }}
-                  onClick={handleTableClick}
-                  className={`${view === "table" ? "iconActive" : "iconDeactive"
-                    }`}
-                />
-                <BarChartIcon
-                  sx={{ cursor: "pointer" }}
-                  onClick={handleChartClick}
-                  className={`${view === "chart" ? "iconActive" : "iconDeactive"
-                    }`}
-                />
-              </div> */}
-
               <div>
-                {/* <div className="addButtons">
-                  <AnimatedSection transitionType="animate__slideInLeft">
-                  <Button onClick={handleAddIncome} className="addNew" variant="success">
-                    Add Income
-                  </Button>
-                  </AnimatedSection>
-                  <AnimatedSection transitionType="animate__slideInRight">
-                  <Button onClick={handleAddExpense} className="addNew" variant="danger">
-                    Add Expense
-                  </Button>
-                  </AnimatedSection>
-                </div> */}
-                <Modal show={show} onHide={handleClose} centered>
-                  <Modal.Header closeButton>
-                    <Modal.Title>Add Transaction Details</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <Form>
-                      <Form.Group className="mb-3" controlId="formName">
-                        <Form.Label>Title</Form.Label>
-                        <Form.Control
-                          name="title"
-                          type="text"
-                          placeholder="Enter Transaction Name"
-                          value={values.name}
-                          onChange={handleChange}
-                        />
-                      </Form.Group>
+                
+                {data.transactionModalVisibility && <ModelForm/>}
 
-                      <Form.Group className="mb-3" controlId="formAmount">
-                        <Form.Label>Amount</Form.Label>
-                        <Form.Control
-                          name="amount"
-                          type="number"
-                          placeholder="Enter your Amount"
-                          value={values.amount}
-                          onChange={handleChange}
-                        />
-                      </Form.Group>
-
-                      <Form.Group className="mb-3" controlId="formSelect">
-                        <Form.Label>Bank</Form.Label>
-                        <Form.Select
-                          name="selectedBank"
-                          value={selectedBank && data.banks[selectedBank]}
-                          onChange={handleChange}
-                        >
-                          {
-                            data.banks && data.banks.map((bank, index) => {
-                              return <option value={index}>{bank.bankName}</option>
-                            })
-                          }
-                        </Form.Select>
-                      </Form.Group>
-
-                      <Form.Group className="mb-3" controlId="formSelect">
-                        <Form.Label>Category</Form.Label>
-                        <Form.Select
-                          name="category"
-                          value={values.category}
-                          onChange={handleChange}
-                        >
-                          <option value="">{data.categories && data.categories.length === 0 ? "No categories found, please add" : ""}</option>
-                          {data.categories ? data.categories.map((category, index) => {
-                            
-                            return (<option key={index} value={category.category}>{category.category}</option>)
-                          }) : ""}
-                        </Form.Select>
-                      </Form.Group>
-
-
-
-                      <Form.Group className="mb-3" controlId="formSelect1">
-                        <Form.Label>Transaction Type : </Form.Label>
-                        {/* <Form.Select
-                          name="transactionType"
-                          value={values.transactionType}
-                          onChange={handleChange}
-                        >
-                          <option value="">Choose...</option>
-                          <option value="credit">Credit</option>
-                          <option value="expense">Expense</option>
-                        </Form.Select> */}
-                        <Form.Label> {typeOfTransaction}</Form.Label>
-                      </Form.Group>
-
-                      <Form.Group className="mb-3" controlId="formDate">
-                        <Form.Label>Date</Form.Label>
-                        <Form.Control
-                          type="date"
-                          name="date"
-                          value={values.date}
-                          onChange={handleChange}
-                        />
-                      </Form.Group>
-
-                      {/* Add more form inputs as needed */}
-                    </Form>
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                      Close
-                    </Button>
-                    <Button variant="primary" onClick={handleSubmit}>
-                      Submit
-                    </Button>
-                  </Modal.Footer>
-                </Modal>
+                
 
                 <Modal show={bankShow} onHide={handleBankClose} centered>
                   <Modal.Header closeButton>

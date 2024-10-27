@@ -1,6 +1,6 @@
 
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Navbar, Nav, Button, Container } from 'react-bootstrap';
 import './style.css';
 import { useNavigate } from 'react-router-dom';
@@ -8,14 +8,21 @@ import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import BarChartIcon from "@mui/icons-material/BarChart";
+import { AppContext } from './Context/AppContext';
 
 const Header = (props) => {
+  const {data,dispatch} = useContext(AppContext);
   const navigate = useNavigate();
   const [user, setUser] = useState();
 
   const handleShowLogin = () => {
     navigate('/login');
   };
+
+  const handleAddTransaction = (transactionType)=>{
+    dispatch({type:"editDetails" , payload:{edit:false, transactionType:transactionType}})
+    dispatch({type:"transactionModalVisibility", payload:true});
+  }
 
   useEffect(() => {
     if (localStorage.getItem('user')) {
@@ -239,14 +246,14 @@ const Header = (props) => {
             </Button>
             <Button
         variant="outline-light"
-        onClick={()=>props.handleAddIncome()}
+        onClick={()=>handleAddTransaction("Credit")}
         className="mx-1 navButton"
       >
         <i className="fas fa-plus-circle"></i> <small>Income</small>
       </Button>
       <Button
         variant="outline-light"
-        onClick={props.handleAddExpense}
+        onClick={()=>handleAddTransaction("Expense")}
         className="mx-1 navButton"
       >
         <i className="fas fa-minus-circle"></i> <small>Expense</small>
@@ -297,14 +304,14 @@ const Header = (props) => {
       </Button>
       <Button
         variant="outline-light"
-        onClick={()=>props.handleAddIncome()}
+        onClick={()=>handleAddTransaction("Credit")}
         className="mx-1 navButton"
       >
         <i className="fas fa-plus-circle"></i> <small>Income</small>
       </Button>
       <Button
         variant="outline-light"
-        onClick={props.handleAddExpense}
+        onClick={()=>handleAddTransaction("Expense")}
         className="mx-1 navButton"
       >
         <i className="fas fa-minus-circle"></i> <small>Expense</small>
