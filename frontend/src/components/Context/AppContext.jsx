@@ -6,7 +6,7 @@ export const appState = {
     loading:false,
     addCategoryModal : false,
     addBankModal : false,
-    editBankValues:null,
+    editValues:null,
     reload:false,
     fullAppRefresh :false,
 }
@@ -63,7 +63,7 @@ export const appReducer = (state,action)=>{
 
         case "addBankModal" : return {...state,addBankModal:action.payload};
 
-        case "editBankDetails" : return{...state,editBankValues:action.payload }
+        case "editDetails" : return{...state,editValues:action.payload }
 
         case "reload" : return{...state, reload:!state.reload}
 

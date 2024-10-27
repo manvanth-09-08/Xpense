@@ -140,12 +140,10 @@ const Home = () => {
   }
 
   const handleAddNewCategory = () => {
-    setAddCategoryShow(true);
+    dispatch({type:"addCategoryModal" , payload:true})
   }
 
-  const handleAddNewCategoryClose = () => {
-    setAddCategoryShow(false);
-  }
+
 
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -447,7 +445,7 @@ const Home = () => {
                     </div>
                   </Modal.Header>
                   <Category refresh={refresh} setRefresh={setRefresh}></Category>
-                  <AddCategoryModal addCategoryShow={addCategoryShow} handleAddNewCategory={handleAddNewCategoryClose} />
+                  <AddCategoryModal/>
                 </Modal>
               </div>
             </div>

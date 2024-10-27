@@ -15,13 +15,11 @@ export const Category =(props)=>{
     const [category,setCategory] =useState(null)
 
     const handleAddNewCategory = (category) => {
-        setAddCategoryShow(true);
-        setCategory(category)
+        dispatch({type:"editDetails", payload:{edit:true,category}})
+        dispatch({type:"addCategoryModal" , payload:true})
       }
     
-      const handleAddNewCategoryClose = () => {
-        setAddCategoryShow(false);
-      }
+
 
     const toastOptions = {
         position: "bottom-right",
@@ -99,8 +97,8 @@ export const Category =(props)=>{
                     })}
                 </tbody>
             </Table>
-            {addCategoryShow &&
-            <AddCategoryModal addCategoryShow={addCategoryShow} handleAddNewCategory={handleAddNewCategoryClose} update={true} category={category} refresh={props.refresh} setRefresh = {props.setRefresh}/>
+            {data.addCategoryModal &&
+            <AddCategoryModal />
        }
         </Container>
         

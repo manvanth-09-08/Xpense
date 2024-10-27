@@ -14,14 +14,13 @@ export const AddCategoryModal = (props)=>{
     const [show,setShow] = useState(false);
     const [email,setEmail] = useState(null)
 
-    const [category,setCategory] = useState(props.update?props.category.category :"");
+    const [category,setCategory] = useState(null);
     const [budget,setBudget] = useState(null)
     const [defaultBankAccount,setDefaultBankAccount] = useState(null)
 
     const [index,setIndex] = useState(null);
     const [nameAlreadyExistsError, setNameAlreadyExistsError] = useState(false)
-    const [previousCategoryName,setpreviousCategoryName] = useState(props.update?props.category.category :"")
-    
+   
     
     const toastOptions = {
         position: "bottom-right",
@@ -45,6 +44,10 @@ export const AddCategoryModal = (props)=>{
       setVariable(e.target.value)
     }
 
+    const handleCloseModal = ()=>{
+      dispatch({type:"addCategoryModal" , payload:false})
+    }
+
     const handleCategoryNameChange = (e)=>{
       const enteredCategoryName = e.target.value.trim().toLowerCase(); // Trim and normalize case for comparison
 
@@ -65,11 +68,11 @@ export const AddCategoryModal = (props)=>{
     const handleUpdate = async()=>{
       const updatedCategory = category;
       try{
-        const responseData = await updateCategory(email,category, previousCategoryName)
+        const responseData = await updateCategory(email,category, data.editValues.category.category)
             if(responseData.success){                       
-                props.handleAddNewCategory();
+              handleCloseModal()
                 toast.success(responseData.message, toastOptions);
-                props.setRefresh(! props.refresh)
+                dispatch({type:"fullAppRefresh"})
             }else{
               toast.error(responseData.message, toastOptions);
             }
@@ -88,7 +91,7 @@ export const AddCategoryModal = (props)=>{
             if(responseData.success){
                 dispatch({type:"addCategory", payload : category})
                 resetCategory();                
-                props.handleAddNewCategory();
+                handleCloseModal();
                 toast.success(responseData.message, toastOptions);
                 dispatch({type:"reload"})
             }else{
@@ -112,8 +115,14 @@ export const AddCategoryModal = (props)=>{
         fetchCategories();        
     }, [localStorage.getItem("user")])
 
+    useEffect(() => {
+      if (data.editValues && data.editValues.edit) {
+        setCategory(data.editValues.category.category);
+      }
+    }, [data.editValues]);
+
     return (
-        <Modal show={props.addCategoryShow} onHide={props.handleAddNewCategory} centered>
+        <Modal show={data.addCategoryModal} onHide={handleCloseModal} centered>
                   <Modal.Header closeButton>
                     <Modal.Title>Category Details</Modal.Title>
                   </Modal.Header>
@@ -154,10 +163,10 @@ export const AddCategoryModal = (props)=>{
                     </Form>
                   </Modal.Body>
                   <Modal.Footer>
-                    <Button variant="secondary" onClick={props.handleAddNewCategory}>
+                    <Button variant="secondary" onClick={handleCloseModal}>
                       Close
                     </Button>
-                    {props.update?<Button variant="primary" onClick={handleUpdate} disabled={nameAlreadyExistsError}>
+                    {data.editValues && data.editValues.edit?<Button variant="primary" onClick={handleUpdate} disabled={nameAlreadyExistsError}>
                       Update
                     </Button>:
                     <Button variant="primary" onClick={handleSubmit} disabled={nameAlreadyExistsError}>

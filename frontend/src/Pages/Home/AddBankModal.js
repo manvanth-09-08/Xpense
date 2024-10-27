@@ -28,7 +28,7 @@ export const AddBankModal = () => {
   };
 
   const handleCloseModal = ()=>{
-    dispatch({ type:"editBankDetails" , payload:null    })
+    dispatch({ type:"editDetails" , payload:null    })
     dispatch({type:"addBankModal", payload:false})
 
   }
@@ -64,7 +64,7 @@ export const AddBankModal = () => {
 
   const handleUpdate = async()=>{
     try{
-      const responseData = await updateBankDetails(email,bankName,bankBalance, data.editBankValues.bankName)
+      const responseData = await updateBankDetails(email,bankName,bankBalance, data.editValues.bankName)
       if(responseData.success){
         toast.success(responseData.message, toastOptions);
         handleCloseModal();
@@ -109,11 +109,11 @@ export const AddBankModal = () => {
   }, [dispatch])
 
   useEffect(() => {
-    if (data.editBankValues && data.editBankValues.edit) {
-      setBankName(data.editBankValues.bankName);
-      setBankBalance(data.editBankValues.bankBalance);
+    if (data.editValues && data.editValues.edit) {
+      setBankName(data.editValues.bankName);
+      setBankBalance(data.editValues.bankBalance);
     }
-  }, [data.editBankValues]);
+  }, [data.editValues]);
 
   return (
     <Modal show={data.addBankModal} onHide={handleCloseModal} centered>
@@ -156,7 +156,7 @@ export const AddBankModal = () => {
         <Button variant="secondary" onClick={handleCloseModal}>
           Close
         </Button>
-        {data.editBankValues && data.editBankValues.bankName ? (<Button variant="primary" onClick={handleUpdate} disabled={nameAlreadyExistsError}>
+        {data.editValues && data.editValues.bankName ? (<Button variant="primary" onClick={handleUpdate} disabled={nameAlreadyExistsError}>
           Update
         </Button>) :
         <Button variant="primary" onClick={handleSubmit} disabled={nameAlreadyExistsError}>

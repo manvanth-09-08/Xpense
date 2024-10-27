@@ -30,7 +30,7 @@ export const Bank =(props)=>{
       const handleEditClick = (bankName,bankBalance)=>{
         setEditingBankName(bankName);
         setEditingBankBalance(bankBalance);
-        dispatch({type:"editBankDetails", payload:{edit:true,bankName,bankBalance}})
+        dispatch({type:"editDetails", payload:{edit:true,bankName,bankBalance}})
         dispatch({type:"addBankModal", payload:true})
       }
 
