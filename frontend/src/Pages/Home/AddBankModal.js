@@ -5,13 +5,13 @@ import { ToastContainer, toast } from "react-toastify";
 import { AppContext } from "../../components/Context/AppContext";
 
 
-export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose, editingBankName, editingBankBalance, refresh, setRefresh }) => {
+export const AddBankModal = () => {
 
   const {data,dispatch} = useContext(AppContext);
   const [email, setEmail] = useState(null)
 
-  const [bankName, setBankName] = useState(editingBankName);
-  const [bankBalance, setBankBalance] = useState(editingBankBalance);
+  const [bankName, setBankName] = useState(null);
+  const [bankBalance, setBankBalance] = useState(null);
   const [nameAlreadyExistsError, setNameAlreadyExistsError] = useState(false)
 
   const [index, setIndex] = useState(null);
@@ -27,6 +27,11 @@ export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose, e
     theme: "dark",
   };
 
+  const handleCloseModal = ()=>{
+    dispatch({ type:"editBankDetails" , payload:null    })
+    dispatch({type:"addBankModal", payload:false})
+
+  }
 
 
   const resetBankDetails = () => {
@@ -59,10 +64,11 @@ export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose, e
 
   const handleUpdate = async()=>{
     try{
-      const responseData = await updateBankDetails(email,bankName,bankBalance, editingBankName)
+      const responseData = await updateBankDetails(email,bankName,bankBalance, data.editBankValues.bankName)
       if(responseData.success){
         toast.success(responseData.message, toastOptions);
-        setRefresh(!refresh)
+        handleCloseModal();
+        dispatch({type:"fullAppRefresh"})
       }else {
         toast.error(responseData.message, toastOptions);
       }
@@ -77,7 +83,7 @@ export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose, e
       if (responseData.success) {
         dispatch({type:"addBankAccount",payload:{bankName,bankBalance}});
         resetBankDetails();
-        handleAddNewBankAccountClose();
+        handleCloseModal();
         dispatch({type:"reload"})
         toast.success(responseData.message, toastOptions);
       } else {
@@ -102,8 +108,15 @@ export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose, e
     fetchBanks();
   }, [dispatch])
 
+  useEffect(() => {
+    if (data.editBankValues && data.editBankValues.edit) {
+      setBankName(data.editBankValues.bankName);
+      setBankBalance(data.editBankValues.bankBalance);
+    }
+  }, [data.editBankValues]);
+
   return (
-    <Modal show={showAddBankModal} onHide={handleAddNewBankAccountClose} centered>
+    <Modal show={data.addBankModal} onHide={handleCloseModal} centered>
       <Modal.Header closeButton>
         <Modal.Title>Bank Details</Modal.Title>
       </Modal.Header>
@@ -140,10 +153,10 @@ export const AddBankModal = ({ showAddBankModal, handleAddNewBankAccountClose, e
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleAddNewBankAccountClose}>
+        <Button variant="secondary" onClick={handleCloseModal}>
           Close
         </Button>
-        {editingBankName ? (<Button variant="primary" onClick={handleUpdate} disabled={nameAlreadyExistsError}>
+        {data.editBankValues && data.editBankValues.bankName ? (<Button variant="primary" onClick={handleUpdate} disabled={nameAlreadyExistsError}>
           Update
         </Button>) :
         <Button variant="primary" onClick={handleSubmit} disabled={nameAlreadyExistsError}>

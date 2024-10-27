@@ -28,13 +28,15 @@ export const Bank =(props)=>{
       };
 
       const handleEditClick = (bankName,bankBalance)=>{
-        setEditBank(true);
         setEditingBankName(bankName);
         setEditingBankBalance(bankBalance);
+        dispatch({type:"editBankDetails", payload:{edit:true,bankName,bankBalance}})
+        dispatch({type:"addBankModal", payload:true})
       }
 
       const handleEditBankClose = ()=>{
-        setEditBank(false);
+        dispatch({type:"addBankModal", payload:false})
+        setEditBank(false)
       }
 
     const handleDeleteBank = async(bankName,bankBalance,index)=>{
@@ -95,8 +97,8 @@ export const Bank =(props)=>{
                     })}
                 </tbody>
             </Table>
-            {editBank && 
-                <AddBankModal showAddBankModal={editBank} handleAddNewBankAccountClose={handleEditBankClose} editingBankName={editingBankName} editingBankBalance={editingBankBalance}  refresh={props.refresh} setRefresh = {props.setRefresh}/>
+            {data.addBankModal && 
+                <AddBankModal />
                 }
         </Container>
     )

@@ -59,6 +59,7 @@ const Home = () => {
   const [addCategoryShow, setAddCategoryShow] = useState(false);
   const [categories, setCategories] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [addNewBank, setAddNewBank] =useState(false);
 
  
 
@@ -127,12 +128,11 @@ const Home = () => {
   });
 
   const handleAddNewBankAccount = () => {
-    setShowAddBankModal(true);
+    dispatch({type:"addBankModal", payload:true})
   }
 
   const handleAddNewBankAccountClose = () => {
-    setRefresh(true);
-    setShowAddBankModal(false)
+    dispatch({type:"addBankModal", payload:false})
   }
 
   const handleCategoryClose = () => {
@@ -269,7 +269,7 @@ const Home = () => {
 
 
     fetchAllTransactions();
-  }, [refresh, frequency, endDate, type, startDate]);
+  }, [refresh, frequency, endDate, type, startDate, data.fullAppRefresh]);
 
   const handleTableClick = (e) => {
     setView("table");
@@ -435,8 +435,7 @@ const Home = () => {
                   < Bank handleAddNewBankAccount={handleAddNewBankAccount}  refresh={refresh} setRefresh={setRefresh}/>
 
                 </Modal>
-                <AddBankModal showAddBankModal={showAddBankModal} handleAddNewBankAccountClose={handleAddNewBankAccountClose} />
-                {console.log("category ----> ", categoryShow)}
+                <AddBankModal />
                 <Modal show={categoryShow} onHide={handleCategoryClose} centered>
 
                   <Modal.Header closeButton>
