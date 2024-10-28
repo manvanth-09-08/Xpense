@@ -45,7 +45,9 @@ export const AddCategoryModal = (props)=>{
     }
 
     const handleCloseModal = ()=>{
+      dispatch({ type:"editDetails" , payload:null    })
       dispatch({type:"addCategoryModal" , payload:false})
+      
     }
 
     const handleCategoryNameChange = (e)=>{
@@ -60,7 +62,7 @@ export const AddCategoryModal = (props)=>{
       setNameAlreadyExistsError(false); // Clear error state if name is unique
     }
 
-    setCategory(e.target.value.trim()); 
+    setCategory(e.target.value); 
 
     }
 
@@ -68,7 +70,7 @@ export const AddCategoryModal = (props)=>{
     const handleUpdate = async()=>{
       const updatedCategory = category;
       try{
-        const responseData = await updateCategory(email,category, data.editValues.category.category,budget)
+        const responseData = await updateCategory(email,category.trim(), data.editValues.category.category,budget)
             if(responseData.success){                       
               handleCloseModal()
                 toast.success(responseData.message, toastOptions);
@@ -87,7 +89,7 @@ export const AddCategoryModal = (props)=>{
 
     const handleSubmit= async()=>{
         try{
-            const responseData = await addCategory(email,category,budget)
+            const responseData = await addCategory(email,category.trim(),budget)
             if(responseData.success){
                 dispatch({type:"categories", payload : responseData.categories})
                 resetCategory();                
@@ -118,8 +120,13 @@ export const AddCategoryModal = (props)=>{
       if (data.editValues && data.editValues.edit) {
         setCategory(data.editValues.category.category);
         setBudget(data.editValues.category.budget)
+      }else{
+        setCategory(data.editValues);
+        setBudget(data.editValues)
       }
     }, [data.editValues]);
+
+    console.log("ddddddd -> ",data)
 
     return (
         <Modal show={data.addCategoryModal} onHide={handleCloseModal} centered>

@@ -52,7 +52,7 @@ export const AddBankModal = () => {
       setNameAlreadyExistsError(false); // Clear error state if name is unique
     }
 
-    setBankName(e.target.value.trim()); // Still update the entered bank name
+    setBankName(e.target.value); // Still update the entered bank name
   };
 
   const handleBankBalanceChange = (e) => {
@@ -64,7 +64,7 @@ export const AddBankModal = () => {
 
   const handleUpdate = async()=>{
     try{
-      const responseData = await updateBankDetails(email,bankName,bankBalance, data.editValues.bankName)
+      const responseData = await updateBankDetails(email,bankName.trim(),bankBalance, data.editValues.bankName)
       if(responseData.success){
         toast.success(responseData.message, toastOptions);
         handleCloseModal();
@@ -79,7 +79,7 @@ export const AddBankModal = () => {
 
   const handleSubmit = async () => {
     try {
-      const responseData = await addBankAccount(email, bankName, bankBalance)
+      const responseData = await addBankAccount(email, bankName.trim(), bankBalance)
       if (responseData.success) {
         dispatch({type:"addBankAccount",payload:{bankName,bankBalance}});
         resetBankDetails();
@@ -112,6 +112,9 @@ export const AddBankModal = () => {
     if (data.editValues && data.editValues.edit) {
       setBankName(data.editValues.bankName);
       setBankBalance(data.editValues.bankBalance);
+    }else{
+      setBankName(data.editValues);
+      setBankBalance(data.editValues);
     }
   }, [data.editValues]);
 

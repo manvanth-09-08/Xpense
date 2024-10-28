@@ -10,6 +10,9 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { red } from '@mui/material/colors';
 import { Box, Tooltip  } from "@mui/material";
 import { Typography } from "@mui/material";
+import Button from 'react-bootstrap/Button';
+
+import Card from "./Cards";
 
 export const Category = (props) => {
     const { data, dispatch } = useContext(AppContext)
@@ -59,7 +62,7 @@ export const Category = (props) => {
 
     return (
         <Container  >
-            <Table className="data-table">
+            {/* <Table className="data-table">
                 <thead>
                     <tr>
                         <td>Category Name</td>
@@ -98,17 +101,14 @@ export const Category = (props) => {
 
                                 : "No budget set"
                             }</td>
-                            {/* <td>{category.budget ? category.budget : "No budget for this"}</td> */}
-
+                           
 
                             <td>
 
                                 <div className="icons-handle">
                                     <EditNoteIcon
                                         sx={{ cursor: "pointer" }}
-                                        //   key={item._id}
-                                        //   id={item._id}
-                                        //   onClick={() => handleEditClick(item._id)}
+
                                         onClick={() => handleAddNewCategory(category)}
                                     />
                                     {console.log("---> cat : ", category)}
@@ -118,7 +118,6 @@ export const Category = (props) => {
                                     <DeleteForeverIcon
                                         sx={{ color: "red", cursor: "pointer" }}
                                         key={index}
-                                        //   id={item._id}
                                         onClick={() => handleDeleteCategory(category.category, index)}
                                     />
                                 </div>
@@ -126,8 +125,14 @@ export const Category = (props) => {
 
                         </tr>)
                     })}
+                    
                 </tbody>
-            </Table>
+               
+            </Table> */}
+            {data.categories && data.categories.map((category,index)=>{
+               return <Card name={category.category} budget={category.budget} limitUtilised={category.limitUtilised} handleEditCategory={()=>handleAddNewCategory(category)} handleDeleteCategory={()=>handleDeleteCategory(category.category,index)}></Card>
+            })}
+            
             {data.addCategoryModal &&
                 <AddCategoryModal />
             }
