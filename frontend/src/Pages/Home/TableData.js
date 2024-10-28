@@ -9,9 +9,11 @@ import axios from "axios";
 import "./TableData.css"
 import AnimatedSection from "../../utils/AnimatedSection";
 import { AppContext } from "../../components/Context/AppContext";
+import { Box, Tooltip } from "@mui/material";
+import Zoom from '@mui/material/Zoom';
 
 const TableData = (props) => {
-  const {data,dispatch} =useContext(AppContext)
+  const { data, dispatch } = useContext(AppContext)
   const [show, setShow] = useState(false);
   const [transactions, setTransactions] = useState([]);
   // const [loading, setLoading] = useState(false);
@@ -24,7 +26,7 @@ const TableData = (props) => {
   const [bankUniqueValues, setBankUniqueValues] = useState(null)
   const [categoryUniqueValues, setCategoryUniqueValues] = useState(null)
 
-  const [dateFilter, setDateFilter] =useState(false);
+  const [dateFilter, setDateFilter] = useState(false);
   const [typeFilter, setTypeFilter] = useState(false);
   const [bankFilter, setBankFilter] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState(false);
@@ -156,11 +158,11 @@ const TableData = (props) => {
     setCategoryFilter(false);
   }
 
-  const handleChangeFrequency = (frequency)=>{
+  const handleChangeFrequency = (frequency) => {
     props.setFrequency(frequency);
   }
 
-  const handleClearDateFilter = ()=>{
+  const handleClearDateFilter = () => {
     props.setFrequency("7");
     setDateFilter(false);
   }
@@ -195,7 +197,7 @@ const TableData = (props) => {
             <tr>
               <th><div className="dropdown">
                 <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}><th>Date</th>
-                {props.frequency!=="7" && (
+                  {props.frequency !== "7" && (
                     <span
                       onClick={() => handleClearDateFilter()}
                       style={{ marginLeft: '8px', cursor: 'pointer', color: 'red' }}
@@ -207,15 +209,15 @@ const TableData = (props) => {
                 <div className="dropdown-content">
                   <a onClick={() => { handleSorting('date', 'ascending') }}>Sort Ascending</a>
                   <a onClick={() => { handleSorting('date', 'descending') }}>Sort Descending</a>
-                  <a onClick={()=> {handleChangeFrequency("30")}}>Last 30 days</a>
-                  <a onClick={()=> {handleChangeFrequency("custom")}}>Custom</a>
+                  <a onClick={() => { handleChangeFrequency("30") }}>Last 30 days</a>
+                  <a onClick={() => { handleChangeFrequency("custom") }}>Custom</a>
                 </div>
               </div></th>
               <th><div className="dropdown">
                 <button className="dropbtn" style={{ display: 'flex', alignItems: 'center' }}><th>Title</th>
-               
+
                 </button>
-                
+
                 <div className="dropdown-content">
                   <a onClick={() => { handleSorting('title', 'ascending') }}>Sort Ascending</a>
                   <a onClick={() => { handleSorting('title', 'descending') }}>Sort Descending</a>
@@ -305,34 +307,44 @@ const TableData = (props) => {
           <tbody className="text-white">
             {transactions && transactions.map((item, index) => (
               <AnimatedSection transitionType="animate__fadeInLeft">
-              <tr key={index}>
-                
-                <td>{moment(item.date).format("YYYY-MM-DD")}</td>
-                <td>{item.title}</td>
-                <td className={(item.transactionType === "Credit" ? "text-success" : "text-danger")}>{(item.transactionType === "Credit" ? "+" : "-") + item.amount}</td>
-                <td>{item.bankName || ""}</td>
-                <td>{item.category}</td>
-                <td>
-                  <div className="icons-handle">
-                    <EditNoteIcon
-                      sx={{ cursor: "pointer" }}
-                      key={item._id}
-                      id={item._id}
-                      onClick={() => handleEditClick(item._id)}
-                    />
+                <tr key={index}>
+               
+                 
+                  <td> <ToolTipForTable title={moment(item.date).format("DD-MM-YYYY")} children={moment(item.date).format("DD-MM-YYYY")} /></td>
+                  {/* </ToolTipForTable> */}
+                  
+                  <td><ToolTipForTable title={item.title} children={item.title} /></td>
+                  
+                  <td className={(item.transactionType === "Credit" ? "text-success" : "text-danger")}>{(item.transactionType === "Credit" ? "+" : "-") + item.amount}</td>
+                 
+                  <td> <ToolTipForTable title={item.bankName || ""} children={item.bankName || ""} /></td>
+                 
+                  <td> <ToolTipForTable title={item.category} children={item.category}/></td>
+                  <td>
+                    <div className="icons-handle">
+                    
+                      <EditNoteIcon
+                        sx={{ cursor: "pointer" }}
+                        key={item._id}
+                        id={item._id}
+                        onClick={() => handleEditClick(item._id)}
+                      />
+                     
 
-                    <DeleteForeverIcon
-                      sx={{ color: "red", cursor: "pointer" }}
-                      key={index}
-                      id={item._id}
-                      onClick={() => handleDeleteClick(item._id)}
-                    />
+                     
+                      <DeleteForeverIcon
+                        sx={{ color: "red", cursor: "pointer" }}
+                        key={index}
+                        id={item._id}
+                        onClick={() => handleDeleteClick(item._id)}
+                      />
+                      
 
 
-                  </div>
-                </td>
-                
-              </tr>
+                    </div>
+                  </td>
+
+                </tr>
               </AnimatedSection>
             ))}
           </tbody>
@@ -408,10 +420,10 @@ const TableData = (props) => {
                     onChange={handleChange}
                   >
                     <option value="">{data.categories && data.categories.length === 0 ? "No categories found, please add" : ""}</option>
-                          {data.categories ? data.categories.map((category, index) => {
-                            
-                            return (<option key={index} value={category.category}>{category.category}</option>)
-                          }) : ""}
+                    {data.categories ? data.categories.map((category, index) => {
+
+                      return (<option key={index} value={category.category}>{category.category}</option>)
+                    }) : ""}
                   </Form.Select>
                 </Form.Group>
 
@@ -463,3 +475,14 @@ const TableData = (props) => {
 };
 
 export default TableData;
+
+const ToolTipForTable = (props) => {
+  return (<Tooltip
+    title={props.title}
+    enterTouchDelay={0}
+    leaveTouchDelay={800}
+     placement="bottom-start"
+     TransitionComponent={Zoom}
+     arrow
+  >{props.children}</Tooltip>)
+}
