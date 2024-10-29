@@ -1,5 +1,5 @@
-const host = "http://localhost:8000";
-// const host = "https://xpense-chi.vercel.app";
+// const host = "http://localhost:8000";
+const host = "https://xpense-chi.vercel.app";
 // const host = "http://192.168.40.198:8000";
 // const host = "http://192.168.40.44:8000";
 export const setAvatarAPI = `${host}/api/auth/setAvatar`;
