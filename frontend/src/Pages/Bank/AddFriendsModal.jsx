@@ -102,7 +102,7 @@ const FriendSearch = () => {
             <Modal.Header closeButton>
                 <Modal.Title>Add a Friend</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body style={{ height: '70vh', overflowY: 'auto' }}>
                 {/* Search Input */}
                 <Form>
                     <Form.Group controlId="searchFriend">
@@ -137,12 +137,11 @@ const FriendSearch = () => {
                                             </Button>
                                         ) : (
                                             <Button
-                                                variant="primary"
                                                 size="sm"
                                                 onClick={() => addFriend(friend)}
-                                                startIcon={<FaUserPlus />}
+                                               
                                             >
-                                                Add
+                                                <i class="fas fa-user-plus"></i>
                                             </Button>
                                         )
                                     )}
