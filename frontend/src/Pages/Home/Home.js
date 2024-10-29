@@ -28,6 +28,7 @@ import { Loans } from "../Bank/Loans";
 import { AddLoanModal } from "../Bank/AddLoanModal";
 import { Friends } from "../Bank/Friends";
 import FriendSearch from "../Bank/AddFriendsModal";
+import { LoanSummary } from "../Bank/LoanSummary";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -155,6 +156,10 @@ const Home = () => {
 
   const handleCloseLoanModal = () => {
     dispatch({ type: "loanModalVisibility", payload: false })
+  }
+
+  const handleOpenLoanSummary = ()=>{
+    dispatch({ type: "loanSummaryVisibility", payload: true })
   }
 
   const handleOpenAddLoanModal = ()=>{
@@ -318,9 +323,14 @@ const Home = () => {
                   <Modal.Header closeButton>
                     <div className="d-flex justify-content-between w-100 align-items-center">
                       <Modal.Title className="">Loan Details</Modal.Title>
-                      <Button variant="success" onClick={handleOpenAddLoanModal}>
-                        Create New
+                      <div>
+                      <Button variant="success" className="m-2" onClick={handleOpenLoanSummary}>
+                        Summary
                       </Button>
+                      <Button variant="success" onClick={handleOpenAddLoanModal}>
+                        Create 
+                      </Button>
+                      </div>
                     </div>
                   </Modal.Header>
                   <Modal.Body style={{ height: '70vh', overflowY: 'auto' }}>
@@ -330,6 +340,7 @@ const Home = () => {
 
                 </Modal>
                 <AddLoanModal />
+                <LoanSummary />
 
                 <Modal show={data.friendsModalVisibility} onHide={handleCloseFriendModal} centered  style={{ minHeight: '50%' }}>
 

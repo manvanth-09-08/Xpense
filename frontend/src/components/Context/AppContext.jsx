@@ -18,6 +18,7 @@ export const appState = {
     fullAppRefresh: false,
     loansLent: null,
     loansBorrowed: null,
+    loanSummaryVisibility :false,
     friendRequest: null,
     myFriends: null,
     friendRequestSent:null,
@@ -90,6 +91,8 @@ export const appReducer = (state, action) => {
         case "loansLent": return { ...state, loansLent: action.payload }
 
         case "loansBorrowed": return { ...state, loansBorrowed: action.payload }
+
+        case "loanSummaryVisibility" : return {...state, loanSummaryVisibility:action.payload}
 
         case "friendRequest": return { ...state, friendRequest: action.payload }
 
