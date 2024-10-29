@@ -13,7 +13,7 @@ const Banks = ({banks }) => {
     const handleShowMore = () => {
 
          setVisibleBanks((prev) => {
-            if (prev >= data.data.banks.length) {
+            if (prev >= data.banks.length) {
                 return window.innerWidth < 768 ? 3 : 12;
             } else {
                 return Math.min(prev + (window.innerWidth < 768 ? 3 : 12), data.banks.length);

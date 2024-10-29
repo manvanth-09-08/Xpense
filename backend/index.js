@@ -7,9 +7,11 @@
   import morgan from "morgan";
   import transactionRoutes from "./Routers/Transactions.js";
   import userRoutes from "./Routers/userRouter.js";
+  import loanRouter from "./Routers/loanRoutes.js"
   import serverless from "serverless-http";
   import cron from 'node-cron';
   import User from "./models/UserSchema.js";
+  import friendRouter from "./Routers/friendRoutes.js"
 
   dotenv.config();
   const app = express();
@@ -24,6 +26,7 @@
     "http://192.168.40.198:3000",
     "http://192.168.0.110:3000",
     "http://192.168.125.98:3000",
+    "http://192.168.40.44:3000"
     // add more origins as needed
   ];
 
@@ -51,10 +54,14 @@
   // Router
   app.use("/api/v1", transactionRoutes);
   app.use("/api/auth", userRoutes);
+  app.use("/api/loan",loanRouter)
+  app.use("/api/friends",friendRouter)
 
   app.get("/", (req, res) => {
     res.send("Hello World!");
   });
+
+  
 
 
   app.listen(port, () => {

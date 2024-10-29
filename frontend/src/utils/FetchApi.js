@@ -1,5 +1,5 @@
 import axios from "axios";
-import { loginAPI, addNewBankAccount, deleteExistingAccount,getBankDetails, deleteExistingCategory, addNewCategory, updateExistingCategory, updateExistingBankDetails } from "./ApiRequest";
+import { loginAPI, addNewBankAccount, deleteExistingAccount,getBankDetails, deleteExistingCategory, addNewCategory, updateExistingCategory, updateExistingBankDetails, addNewLoan, deleteExistingLoan, changeStatus, addNewFriend, deleteExistingFriend } from "./ApiRequest";
 import { Category } from "../Pages/Bank/Category";
 
 export const logIn = async(email,password)=>{
@@ -101,3 +101,65 @@ export const updateCategory = async(email, category, previousCategoryName,budget
     }
 }
 
+export const addLoan = async(lender,lenderName, borrower, loanAmount, loanDescription, loanDate, borrowerName) =>{
+    console.log("lender : ", borrowerName)
+    try{
+        const {data} = await axios.post(addNewLoan,{
+            lender,lenderName, borrower, loanAmount, loanDescription, loanDate, borrowerName
+        });
+        return data;
+    }catch(err){
+        console.log(err)
+        return err.response.data
+    }
+}
+
+export const deleteLoan = async(loanId,lender,borrower)=>{
+    try{
+        const {data} = await axios.post(deleteExistingLoan,{
+            loanId,lender,borrower
+        });
+        return data;
+    }catch(err){
+        console.log(err)
+        return err.response.data
+    }
+}
+
+export const changeLoanStatus = async(loanId,demote)=>{
+    try{
+        const {data} = await axios.post(changeStatus,{
+            loanId,demote
+        });
+        return data;
+    }catch(err){
+        console.log(err)
+        return err.response.data
+    }
+}
+
+
+
+export const sendFriendRequest = async(receiverId,senderId)=>{
+    try{
+        const {data} = await axios.post(addNewFriend,{
+            receiverId,senderId
+        });
+        return data;
+    }catch(err){
+        console.log(err)
+        return err.response.data
+    }
+}
+
+export const deleteFriend = async(userId,friendId)=>{
+    try{
+        const {data} = await axios.post(deleteExistingFriend,{
+            userId,friendId
+        });
+        return data;
+    }catch(err){
+        console.log(err)
+        return err.response.data
+    }
+}

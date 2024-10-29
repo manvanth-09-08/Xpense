@@ -24,6 +24,10 @@ import { AddCategoryModal } from "./AddCategoryModal";
 import AnimatedSection from "../../utils/AnimatedSection";
 import { AppContext } from "../../components/Context/AppContext";
 import ModelForm from "./ModelForm";
+import { Loans } from "../Bank/Loans";
+import { AddLoanModal } from "../Bank/AddLoanModal";
+import { Friends } from "../Bank/Friends";
+import FriendSearch from "../Bank/AddFriendsModal";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -39,7 +43,7 @@ const Home = () => {
     theme: "dark",
   };
 
-  const {data,dispatch} = useContext(AppContext);
+  const { data, dispatch } = useContext(AppContext);
 
   const [cUser, setcUser] = useState();
   const [show, setShow] = useState(false);
@@ -60,9 +64,9 @@ const Home = () => {
   const [addCategoryShow, setAddCategoryShow] = useState(false);
   const [categories, setCategories] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [addNewBank, setAddNewBank] =useState(false);
+  const [addNewBank, setAddNewBank] = useState(false);
 
- 
+
 
   const handleStartChange = (date) => {
     setStartDate(date);
@@ -107,16 +111,16 @@ const Home = () => {
     avatarFunc();
   }, [navigate]);
 
-   //to give the padding below if its mobile
+  //to give the padding below if its mobile
   useEffect(() => {
-      const handleResize = () => {
+    const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
 
     handleResize();
-    window.addEventListener("resize", handleResize); 
+    window.addEventListener("resize", handleResize);
 
-    return () => window.removeEventListener("resize", handleResize); 
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const [values, setValues] = useState({
@@ -134,11 +138,11 @@ const Home = () => {
   };
 
   const handleAddNewBankAccount = () => {
-    dispatch({type:"addBankModal", payload:true})
+    dispatch({ type: "addBankModal", payload: true })
   }
 
   const handleAddNewBankAccountClose = () => {
-    dispatch({type:"addBankModal", payload:false})
+    dispatch({ type: "addBankModal", payload: false })
   }
 
   const handleCategoryClose = () => {
@@ -146,7 +150,23 @@ const Home = () => {
   }
 
   const handleAddNewCategory = () => {
-    dispatch({type:"addCategoryModal" , payload:true})
+    dispatch({ type: "addCategoryModal", payload: true })
+  }
+
+  const handleCloseLoanModal = () => {
+    dispatch({ type: "loanModalVisibility", payload: false })
+  }
+
+  const handleOpenAddLoanModal = ()=>{
+    dispatch({ type: "addLoanModalVisibility", payload: true })
+  }
+
+  const handleCloseFriendModal =()=>{
+    dispatch({ type: "friendsModalVisibility", payload: false })
+  }
+
+  const handleOpenSearchFriendModal = ()=>{
+    dispatch({ type: "searchFriendModalVisibility", payload: true })
   }
 
 
@@ -171,13 +191,17 @@ const Home = () => {
 
   const setBankAndCategories = async () => {
     const responseData = await getBankDetail(cUser.email);
-    dispatch({type:"banks", payload:responseData.bankDetaile})
-    dispatch({type:"categories", payload:responseData.categories})
-    
-    // fetchBanks();
+    console.log("resppp : ", responseData)
+    dispatch({ type: "banks", payload: responseData.bankDetaile })
+    dispatch({ type: "categories", payload: responseData.categories })
+    dispatch({ type: "loansLent", payload: responseData.loansLent })
+    dispatch({ type: "loansBorrowed", payload: responseData.loansBorrowed })
+    dispatch({ type: "friendRequest", payload: responseData.receivedFriendRequests })
+    dispatch({ type: "myFriends", payload: responseData.myFriends })
+    dispatch({ type: "friendRequestSent", payload: responseData.sentFriendRequests })
   }
 
-  
+
 
   const handleReset = () => {
     setType("all");
@@ -189,7 +213,7 @@ const Home = () => {
 
   const fetchAllTransactions = async () => {
     try {
-      dispatch({type:"loading",payload:true})
+      dispatch({ type: "loading", payload: true })
       console.log(cUser._id, frequency, startDate, endDate, type);
       await setBankAndCategories();
       const { data } = await axios.post(getTransactions, {
@@ -204,14 +228,14 @@ const Home = () => {
       setTransactions(data.transactions);
       // let category = ;
       // category = category.categories
-      
+
       // setCategories(JSON.parse(localStorage.getItem("user")).categories);
       // dispatch({type:"categories" , payload:categories})
       console.log("categorye : ", categories)
-      dispatch({type:"loading",payload:false})
+      dispatch({ type: "loading", payload: false })
     } catch (err) {
       // toast.error("Error please Try again...", toastOptions);
-      dispatch({type:"loading",payload:false})
+      dispatch({ type: "loading", payload: false })
     }
   };
 
@@ -234,7 +258,7 @@ const Home = () => {
 
   return (
     <>
-      <Header  view={view} setBankShow={setBankShow} setCategoryShow={setCategoryShow} handleAddIncome={handleAddIncome} handleAddExpense={handleAddExpense} handleTableClick={handleTableClick} handleChartClick={handleChartClick} />
+      <Header view={view} setBankShow={setBankShow} setCategoryShow={setCategoryShow} handleAddIncome={handleAddIncome} handleAddExpense={handleAddExpense} handleTableClick={handleTableClick} handleChartClick={handleChartClick} />
 
       {data.loading ? (
         <>
@@ -242,19 +266,19 @@ const Home = () => {
         </>
       ) : (
         <>
-        {console.log("category , bank",data.banks,data.categories)}
-          <Container 
-            style={{ position: "relative", zIndex: "2 !important",paddingBottom:isMobile ? "25%" : "0", }}
+          {console.log("category , bank", data.banks, data.categories)}
+          <Container
+            style={{ position: "relative", zIndex: "2 !important", paddingBottom: isMobile ? "25%" : "0", }}
             className="mt-3"
           >
             <div className="filterRow">
-             
+
 
               <div>
-                
-                {data.transactionModalVisibility && <ModelForm/>}
 
-                
+                {data.transactionModalVisibility && <ModelForm />}
+
+
 
                 <Modal show={bankShow} onHide={handleBankClose} centered>
                   <Modal.Header closeButton>
@@ -265,8 +289,9 @@ const Home = () => {
                       </Button>
                     </div>
                   </Modal.Header>
-                  < Bank handleAddNewBankAccount={handleAddNewBankAccount}  refresh={refresh} setRefresh={setRefresh}/>
-
+                  <Modal.Body style={{ height: '70vh', overflowY: 'auto' }}>
+                  < Bank handleAddNewBankAccount={handleAddNewBankAccount} refresh={refresh} setRefresh={setRefresh} />
+                  </Modal.Body>
                 </Modal>
                 <AddBankModal />
                 <Modal show={categoryShow} onHide={handleCategoryClose} centered>
@@ -274,14 +299,56 @@ const Home = () => {
                   <Modal.Header closeButton>
                     <div className="d-flex justify-content-between w-100 align-items-center">
                       <Modal.Title className="">Category Details</Modal.Title>
-                      <Button variant="success"  onClick={handleAddNewCategory}>
+                      <Button variant="success" onClick={handleAddNewCategory}>
                         Create New
                       </Button>
                     </div>
                   </Modal.Header>
+                  <Modal.Body style={{ height: '70vh', overflowY: 'auto' }}>
                   <Category refresh={refresh} setRefresh={setRefresh}></Category>
-                  <AddCategoryModal/>
+                  
+                  </Modal.Body>
                 </Modal>
+                <AddCategoryModal />
+
+               
+
+                <Modal show={data.loanModalVisibility} onHide={handleCloseLoanModal} centered  style={{ minHeight: '50%' }}>
+
+                  <Modal.Header closeButton>
+                    <div className="d-flex justify-content-between w-100 align-items-center">
+                      <Modal.Title className="">Loan Details</Modal.Title>
+                      <Button variant="success" onClick={handleOpenAddLoanModal}>
+                        Create New
+                      </Button>
+                    </div>
+                  </Modal.Header>
+                  <Modal.Body style={{ height: '70vh', overflowY: 'auto' }}>
+                  <Loans></Loans>
+                  </Modal.Body>
+                  
+
+                </Modal>
+                <AddLoanModal />
+
+                <Modal show={data.friendsModalVisibility} onHide={handleCloseFriendModal} centered  style={{ minHeight: '50%' }}>
+
+                  <Modal.Header closeButton>
+                    <div className="d-flex justify-content-between w-100 align-items-center">
+                      <Modal.Title className="">Friend Details</Modal.Title>
+                      <Button variant="success" onClick={handleOpenSearchFriendModal}>
+                        Add friends
+                      </Button>
+                    </div>
+                  </Modal.Header>
+                  <Modal.Body style={{ height: '70vh', overflowY: 'auto' }}>
+                  <Friends></Friends>
+                  </Modal.Body>
+                  
+
+                </Modal>
+                <FriendSearch></FriendSearch>
+
               </div>
             </div>
             <br style={{ color: "white" }}></br>
@@ -333,13 +400,14 @@ const Home = () => {
               <>
                 {console.log("hehehe")}
                 <Banks banks={banks}></Banks>
-                <TableData data={transactions} user={cUser} banks={banks} frequency={frequency} setFrequency={setFrequency}/>
+                <TableData data={transactions} user={cUser} banks={banks} frequency={frequency} setFrequency={setFrequency} />
               </>
             ) : (
               <>
-                <Analytics transactions={transactions}/>
+                <Analytics transactions={transactions} />
               </>
             )}
+           
             <ToastContainer />
           </Container>
         </>

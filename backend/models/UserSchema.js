@@ -12,13 +12,13 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, "Email is required"],
-        unique : true,
-        validate : validator.isEmail,
+        unique: true,
+        validate: validator.isEmail,
     },
     password: {
         type: String,
         required: [true, "Password is required"],
-        minlength : [6, "Password Must Be Atleast 6 characters"],
+        minlength: [6, "Password Must Be Atleast 6 characters"],
     },
     isAvatarImageSet: {
         type: Boolean,
@@ -34,26 +34,26 @@ const userSchema = new mongoose.Schema({
     },
 
     createdAt: {
-        type:Date,
+        type: Date,
         default: Date.now,
     },
 
-    bankAccount:{
-        type:[],
+    bankAccount: {
+        type: [],
     },
-    
+
     categories: {
         type: [{
             category: {
                 type: String,
                 required: true,
             },
-            budget:{
-                type:Number,
+            budget: {
+                type: Number,
             },
-            limitUtilised :{
-                type:Number,
-                default:0,
+            limitUtilised: {
+                type: Number,
+                default: 0,
             }
         }],
         default: [
@@ -63,10 +63,42 @@ const userSchema = new mongoose.Schema({
             { category: 'Bills' },
             { category: 'Others' }
         ]
-    }
+    },
+
+    lent: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Loan'
+        }
+    ],
+    borrowed: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Loan'
+        }
+    ],
+
+    friends: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    ],
+    friendRequestsSent: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    ],
+    friendRequestsReceived: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    ],
 
 });
 
 const User = mongoose.model("User", userSchema);
 
-export default  User;
+export default User;

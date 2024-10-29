@@ -85,7 +85,7 @@ export const loginControllers = async (req, res, next) => {
         return res.status(200).json({
             success: true,
             message: `Welcome back, ${user.name}`,
-            user:{_id:user._id,email:user.email,isAvatarImageSet:user.isAvatarImageSet,avatarImage:user.avatarImage},
+            user:{_id:user._id,email:user.email,isAvatarImageSet:user.isAvatarImageSet,avatarImage:user.avatarImage, userName:user.name},
         });
 
     }
@@ -257,7 +257,19 @@ export const getBankDetails = async (req, res) => {
             });
         }
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).populate('lent').populate('borrowed')
+        .populate({
+            path: 'friends',
+            select: 'name  avatarImage _id',
+        })
+        .populate({
+            path: 'friendRequestsSent',
+            select: 'name  avatarImage _id',
+        })
+        .populate({
+            path: 'friendRequestsReceived',
+            select: 'name  avatarImage _id',
+        })
 
         if (!user) {
             return res.status(401).json({
@@ -266,7 +278,17 @@ export const getBankDetails = async (req, res) => {
             });
         }
 
-        return res.status(200).json({ success: true, message: "Bank details fetched", bankDetaile: user.bankAccount , categories : user.categories})
+        return res.status(200).json({ success: true, 
+            message: "Bank details fetched", 
+            bankDetaile: user.bankAccount , 
+            categories : user.categories, 
+            loansLent : user.lent, 
+            loansBorrowed : user.borrowed,
+            myFriends: user.friends,
+            receivedFriendRequests: user.friendRequestsReceived,
+            sentFriendRequests : user.friendRequestsSent
+            
+        })
 
     } catch (err) {
         return res.status(500).json({ success: false, message: "Internal server error" })
@@ -396,6 +418,31 @@ export const updateCategory = async(req,res)=>{
         return res.status(500).json({ success: false, message: "Internal server error" })
     }
 }
+
+export const getLoans = async(req,res)=>{
+    try{
+        const {userEmail} = req.body;
+        if(!userEmail){
+            return res.status(403).json({ success: false, message: "Please log in" })
+        }
+
+        const user = User.findOne({ email }).populate('lent').populate('borrowed');
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        return res.status(200).json({ success: true, message: "Loan details fetched",loanLent : user.lent, loanBorrowed : user.borrowed})
+
+    }catch(err){
+        console.log(err)
+        return res.status(500).json({ success: false, message: "Internal server error" })
+    }
+}
+
+
 
 
 

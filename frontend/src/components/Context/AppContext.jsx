@@ -1,76 +1,153 @@
 import React, { createContext, useReducer } from 'react';
 
+const statusFlow = {
+    pending: "inApproval",
+    inApproval: "paid",
+    paid: "paid" // "paid" is the final status, so it remains unchanged
+};
+
 export const appState = {
-    banks:null,
-    categories:null,
-    loading:false,
-    addCategoryModal : false,
-    addBankModal : false,
-    transactionModalVisibility : false,
-    editValues:null,
-    reload:false,
-    fullAppRefresh :false,
+    banks: null,
+    categories: null,
+    loading: false,
+    addCategoryModal: false,
+    addBankModal: false,
+    transactionModalVisibility: false,
+    editValues: null,
+    reload: false,
+    fullAppRefresh: false,
+    loansLent: null,
+    loansBorrowed: null,
+    friendRequest: null,
+    myFriends: null,
+    friendRequestSent:null,
+    loanModalVisibility: false,
+    addLoanModalVisibility: false,
+    friendsModalVisibility: false,
+    searchFriendModalVisibility: false,
 }
 
-export const appReducer = (state,action)=>{
-    switch(action.type){
-        case "banks":return {...state,banks:action.payload};
+export const appReducer = (state, action) => {
+    switch (action.type) {
+        case "banks": return { ...state, banks: action.payload };
 
-        case "deleteBankAccount" : {
+        case "deleteBankAccount": {
             let bankAccount = state.banks;
-            bankAccount.splice( bankAccount.findIndex((bank)=>bank.bankName===action.payload),1)
-            return{
+            bankAccount.splice(bankAccount.findIndex((bank) => bank.bankName === action.payload), 1)
+            return {
                 ...state,
-                banks:bankAccount,
+                banks: bankAccount,
             }
         }
-        
-        case "addBankAccount":{
+
+        case "addBankAccount": {
             let bankAccount = state.banks;
             bankAccount.push({ bankName: action.payload.bankName, accountBalance: action.payload.bankBalance })
-            return{
+            return {
                 ...state,
-                banks:bankAccount,
+                banks: bankAccount,
             }
         }
-            
 
 
-        case "categories" : return {...state,categories:action.payload};
 
-        case "deleteCategory" : {
+        case "categories": return { ...state, categories: action.payload };
+
+        case "deleteCategory": {
             let categories = state.categories;
-            categories.splice( categories.findIndex((category)=>category.category===action.payload),1)
-            return{
+            categories.splice(categories.findIndex((category) => category.category === action.payload), 1)
+            return {
                 ...state,
-                categories:categories,
+                categories: categories,
             }
         }
 
-        case "addCategory" :{
+        case "addCategory": {
             let categories = state.categories;
-            categories.push({category : action.payload.category,budget:action.payload.budget})
-            return{
+            categories.push({ category: action.payload.category, budget: action.payload.budget })
+            return {
                 ...state,
-                categories:categories,
+                categories: categories,
             }
         }
 
 
 
-        case "loading" : return {...state,loading:action.payload};
+        case "loading": return { ...state, loading: action.payload };
 
-        case "addCategoryModal" : return {...state,addCategoryModal:action.payload};
+        case "addCategoryModal": return { ...state, addCategoryModal: action.payload };
 
-        case "addBankModal" : return {...state,addBankModal:action.payload};
+        case "addBankModal": return { ...state, addBankModal: action.payload };
 
-        case "transactionModalVisibility" :return {...state,transactionModalVisibility:action.payload}
+        case "transactionModalVisibility": return { ...state, transactionModalVisibility: action.payload }
 
-        case "editDetails" : return{...state,editValues:action.payload }
+        case "editDetails": return { ...state, editValues: action.payload }
 
-        case "reload" : return{...state, reload:!state.reload}
+        case "reload": return { ...state, reload: !state.reload }
 
-        case "fullAppRefresh" : return {...state, fullAppRefresh:!state.fullAppRefresh}
+        case "fullAppRefresh": return { ...state, fullAppRefresh: !state.fullAppRefresh }
+
+        case "loansLent": return { ...state, loansLent: action.payload }
+
+        case "loansBorrowed": return { ...state, loansBorrowed: action.payload }
+
+        case "friendRequest": return { ...state, friendRequest: action.payload }
+
+        case "friendRequestSent" : return {...state, friendRequestSent:action.payload}
+
+        case "addFriendRequestId" : return { ...state, friendRequestSent: [...state.friendRequestSent, action.payload] }
+
+        case "myFriends": return { ...state, myFriends: action.payload };
+
+        case "acceptFriendRequest":return{
+            ...state,
+            friendRequest: state.friendRequest.filter(req =>req._id !== action.payload._id),
+            myFriends :  [...state.myFriends, action.payload]
+        }
+
+        case "deleteFriendRequest" :return{
+            ...state,
+            friendRequest: state.friendRequest.filter(req =>req._id !== action.payload),
+        }
+
+        case "deleteFriend" : return{
+            ...state,
+            myFriends: state.myFriends.filter(req =>req._id !== action.payload),
+        }
+
+        case "loanModalVisibility": return { ...state, loanModalVisibility: action.payload }
+
+        case "addLoanModalVisibility": return { ...state, addLoanModalVisibility: action.payload }
+
+        case "addNewLoanBorrowed": return { ...state, loansBorrowed: [...state.loansBorrowed, action.payload] }
+
+        case "addNewLoanLent": return { ...state, loansLent: [...state.loansLent, action.payload] }
+
+        case "deleteLoan":
+            return {
+                ...state,
+                loansLent: state.loansLent.filter(loan => loan._id !== action.payload),
+                loansBorrowed: state.loansBorrowed.filter(loan => loan._id !== action.payload)
+            };
+
+        case "updateLoanStatus":
+            return {
+                ...state,
+                loansLent: state.loansLent.map(loan =>
+                    loan._id === action.payload
+                        ? { ...loan, loanStatus: action.demote?"pending":statusFlow[loan.loanStatus] }
+                        : loan
+                ),
+                loansBorrowed: state.loansBorrowed.map(loan =>
+                    loan._id === action.payload
+                        ? { ...loan, loanStatus: statusFlow[loan.loanStatus] }
+                        : loan
+                )
+            };
+
+        case "friendsModalVisibility": return { ...state, friendsModalVisibility: action.payload }
+
+        case "searchFriendModalVisibility": return { ...state, searchFriendModalVisibility: action.payload }
 
     }
 }
