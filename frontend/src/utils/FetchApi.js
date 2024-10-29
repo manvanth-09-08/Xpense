@@ -102,7 +102,7 @@ export const updateCategory = async(email, category, previousCategoryName,budget
 }
 
 export const addLoan = async(lender,lenderName, borrower, loanAmount, loanDescription, loanDate, borrowerName) =>{
-    console.log("lender : ", borrowerName)
+    console.log("lender : ", lender,lenderName, borrower, loanAmount, loanDescription, loanDate, borrowerName)
     try{
         const {data} = await axios.post(addNewLoan,{
             lender,lenderName, borrower, loanAmount, loanDescription, loanDate, borrowerName
@@ -127,10 +127,10 @@ export const deleteLoan = async(loanId,lender,borrower)=>{
     }
 }
 
-export const changeLoanStatus = async(loanId,demote)=>{
+export const changeLoanStatus = async(loanId,demote,repayed)=>{
     try{
         const {data} = await axios.post(changeStatus,{
-            loanId,demote
+            loanId,demote,repayed
         });
         return data;
     }catch(err){

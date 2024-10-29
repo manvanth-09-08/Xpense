@@ -92,7 +92,7 @@ export const Loans = (props) => {
 
     const handleDemoteRequest = async(loanId)=>{
         try {
-            const responseData = await changeLoanStatus(loanId,true)
+            const responseData = await changeLoanStatus(loanId,true,false)
             if (responseData.success) {
                 setTimeout(() => {
                     dispatch({ type: "updateLoanStatus", payload: loanId, demote:true })
@@ -105,9 +105,25 @@ export const Loans = (props) => {
         }
     }
 
-    const handleMarkAsPaid = async (loanId) => {
+    const handleMarkRepaid = async(loanId)=>{
         try {
-            const responseData = await changeLoanStatus(loanId,false)
+            const responseData = await changeLoanStatus(loanId,false,true)
+            if (responseData.success) {
+                setTimeout(() => {
+                    dispatch({ type: "updateLoanStatus", payload: loanId, demote:false, repayed:true })
+                    toast.success(data.message, toastOptions);
+                }, 200)
+
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const handleMarkAsPaid = async (loanId) => {
+        console.log("inside mark as paid")
+        try {
+            const responseData = await changeLoanStatus(loanId,false,false)
             if (responseData.success) {
                 setTimeout(() => {
                     dispatch({ type: "updateLoanStatus", payload: loanId, demote:false })
@@ -192,20 +208,13 @@ export const Loans = (props) => {
                                             </IconButton>
                                         }
 
-                                        {loan.loanStatus === "pending" &&
-                                            <IconButton
-                                                aria-label="edit"
-                                                sx={{ color: 'black' }}
-                                            >
-                                                <HourglassEmptyIcon />
-                                            </IconButton>
-                                        }
+                                       
 
-                                        {loan.loanStatus === "inApproval" &&
+                                        {loan.loanStatus !== "paid" &&
                                             <IconButton
                                                 aria-label="Approve this request"
                                                 sx={{ color: 'black' }}
-                                                onClick={() => handleMarkAsPaid(loan._id)}
+                                                onClick={() => handleMarkRepaid(loan._id)}
                                             >
                                                 <ThumbUpIcon />
                                             </IconButton>}
@@ -223,8 +232,8 @@ export const Loans = (props) => {
                                 }
                             />
                             <CardContent sx={{ padding: '8px' }}>
-                                <Typography variant='body2' sx={{ fontSize: '0.875rem' }}>Lent to: {loan.borrowerName}</Typography>
-                                <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>Date: {new Date(loan.loanDate).toLocaleDateString()}</Typography>
+                                <Typography variant='body2' sx={{ fontSize: '0.875rem' }}>Lent to {loan.borrowerName} on {new Date(loan.loanDate).toLocaleDateString()}</Typography>
+                                {/* <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>Date: {new Date(loan.loanDate).toLocaleDateString()}</Typography> */}
                                 <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>Status: {loan.loanStatus}</Typography>
                             </CardContent>
                         </StyledCard>
@@ -272,7 +281,16 @@ export const Loans = (props) => {
                                         {loan.loanStatus === "pending" &&
                                             <IconButton
                                                 aria-label="mark as paid"
-                                                onClick={() => handleMarkAsPaid(loan._id)}
+                                                onClick={() => {
+                                                    if(loan.lender){
+                                                        handleMarkAsPaid(loan._id)
+                                                    }
+                                                    else{
+                                                        console.log("heheheh inside markRepaid")
+                                                        handleMarkRepaid(loan._id)
+                                                    }    
+                                                }
+                                                }
                                                 sx={{ color: 'green' }}
                                             >
                                                 <DomainVerificationIcon />
@@ -300,8 +318,7 @@ export const Loans = (props) => {
                                 }
                             />
                             <CardContent sx={{ padding: '8px' }}>
-                                <Typography variant='body2' sx={{ fontSize: '0.875rem' }}>Borrowed From: {loan.lenderName}</Typography>
-                                <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>Date: {new Date(loan.loanDate).toLocaleDateString()}</Typography>
+                                <Typography variant='body2' sx={{ fontSize: '0.875rem' }}>Borrowed From {loan.lenderName} on {new Date(loan.loanDate).toLocaleDateString()}</Typography>
                                 <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>Status: {loan.loanStatus}</Typography>
                             </CardContent>
                         </StyledCard>

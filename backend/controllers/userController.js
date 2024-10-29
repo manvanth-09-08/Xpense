@@ -39,7 +39,7 @@ export const registerControllers = async (req, res, next) => {
         return res.status(200).json({
             success: true,
             message: "User Created Successfully",
-            user: newUser
+            user:{_id:newUser._id,email:newUser.email,isAvatarImageSet:newUser.isAvatarImageSet,avatarImage:newUser.avatarImage, userName:newUser.name},
         });
     }
     catch (err) {

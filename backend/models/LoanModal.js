@@ -42,6 +42,11 @@ const loanSchema = new mongoose.Schema({
         enum:["pending", "paid","inApproval"],
         default:"pending"
     },
+
+    repaidLoanAmount :{
+        type:Number,
+        default:0
+    }
 })
 
 const Loan = mongoose.model("Loan",loanSchema);

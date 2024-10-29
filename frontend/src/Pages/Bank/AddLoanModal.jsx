@@ -1,5 +1,5 @@
 import { useControlled } from "@mui/material";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Modal, Button, Form, Container } from "react-bootstrap";
 import { AppContext } from "../../components/Context/AppContext";
 import { addLoan } from "../../utils/FetchApi";
@@ -77,6 +77,16 @@ export const AddLoanModal = (props) => {
         }
     }
 
+    useEffect(()=>{
+        setLoanDescription(null);
+        setLoanAmount(null);
+        setLoanType(null);
+        setSecondUser(null);
+        setLoanDate(null);
+        setBorrowerName(null);
+        setAuxBorrower(null);
+    },[data.addLoanModalVisibility])
+
     return (
         <Modal show={data.addLoanModalVisibility} onHide={handleModalClose} centered>
             <Modal.Header closeButton>
@@ -135,6 +145,7 @@ export const AddLoanModal = (props) => {
                                 handleInputChange(setBorrowerName, e)
                                 const selectedFriend = data.myFriends.find(friend => friend.name === e.target.value);
                                 selectedFriend && setSecondUser(selectedFriend._id)
+                                console.log("second in onclick : ",selectedFriend)
                             }}
 
                         >

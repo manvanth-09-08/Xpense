@@ -138,12 +138,12 @@ export const appReducer = (state, action) => {
                 ...state,
                 loansLent: state.loansLent.map(loan =>
                     loan._id === action.payload
-                        ? { ...loan, loanStatus: action.demote?"pending":statusFlow[loan.loanStatus] }
+                        ? { ...loan, loanStatus: action.demote?"pending":action.repayed?"paid":statusFlow[loan.loanStatus] }
                         : loan
                 ),
                 loansBorrowed: state.loansBorrowed.map(loan =>
                     loan._id === action.payload
-                        ? { ...loan, loanStatus: statusFlow[loan.loanStatus] }
+                        ? { ...loan, loanStatus: action.repayed?"paid":statusFlow[loan.loanStatus] }
                         : loan
                 )
             };
