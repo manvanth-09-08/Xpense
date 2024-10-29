@@ -277,7 +277,7 @@ const Header = (props) => {
                         }}
                       >
                         <MenuItem onClick={() => { handleLoanVisibility(); handleMenuClose(); }}>
-                          <i className="fas fa-chart-bar" style={{ marginRight: '8px' }}></i>
+                          <i className="fas fa-coins" style={{ marginRight: '8px' }}></i>
                           Loans
                         </MenuItem>
                         <MenuItem onClick={() => { handleFriendsVisibility(); handleMenuClose(); }}>
@@ -352,7 +352,7 @@ const Header = (props) => {
                 onClick={handleLoanVisibility}
                 className="mx-1 navButton"
               >
-                <i className="fas fa-chart-bar"></i> <small>Loans</small>
+                <i className="fas fa-coins"></i> <small>Loans</small>
               </Button>
               <Button
                 variant="outline-light"

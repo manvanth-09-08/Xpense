@@ -290,7 +290,7 @@ const Home = () => {
                     <div className="d-flex justify-content-between w-100 align-items-center">
                       <Modal.Title>Bank Details</Modal.Title>
                       <Button variant="success" onClick={handleAddNewBankAccount}>
-                        Create New
+                      <i class="fas fa-plus"></i>
                       </Button>
                     </div>
                   </Modal.Header>
@@ -305,7 +305,7 @@ const Home = () => {
                     <div className="d-flex justify-content-between w-100 align-items-center">
                       <Modal.Title className="">Category Details</Modal.Title>
                       <Button variant="success" onClick={handleAddNewCategory}>
-                        Create New
+                      <i class="fas fa-plus"></i>
                       </Button>
                     </div>
                   </Modal.Header>
@@ -318,17 +318,17 @@ const Home = () => {
 
                
 
-                <Modal show={data.loanModalVisibility} onHide={handleCloseLoanModal} centered  style={{ minHeight: '50%' }}>
+                <Modal show={data.loanModalVisibility} onHide={handleCloseLoanModal} centered >
 
                   <Modal.Header closeButton>
                     <div className="d-flex justify-content-between w-100 align-items-center">
                       <Modal.Title className="">Loan Details</Modal.Title>
-                      <div>
+                      <div >
                       <Button variant="success" className="m-2" onClick={handleOpenLoanSummary}>
-                        Summary
+                      <i class="fas fa-receipt"></i>
                       </Button>
                       <Button variant="success" onClick={handleOpenAddLoanModal}>
-                        Create 
+                      <i class="fas fa-plus"></i>
                       </Button>
                       </div>
                     </div>
@@ -348,7 +348,8 @@ const Home = () => {
                     <div className="d-flex justify-content-between w-100 align-items-center">
                       <Modal.Title className="">Friend Details</Modal.Title>
                       <Button variant="success" onClick={handleOpenSearchFriendModal}>
-                        Add friends
+                      <i class="fas fa-user-plus"></i>
+
                       </Button>
                     </div>
                   </Modal.Header>
