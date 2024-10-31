@@ -22,6 +22,11 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import DomainVerificationIcon from '@mui/icons-material/DomainVerification';
+import LinearProgress from '@mui/material/LinearProgress';
+import { Form } from 'react-bootstrap';
+import { TextField, Checkbox } from '@mui/material';
+
+
 
 const StyledCard = styled(Card)(({ theme }) => ({
     margin: "10px 5%",
@@ -49,6 +54,9 @@ export const Loans = (props) => {
     const [loanView, setLoanView] = React.useState("borrow");
     const [sortedLoansLent, setSortedLoansLent] = React.useState([]);
     const [srotedLoansBorrowed, setSortedLoansBorrowed] = React.useState([])
+    const [repayingAmount, setRepayingAmount] = React.useState(0);
+    const [loanRepayment, setLoanRepayment] = React.useState(null);
+    const [fullRepayment, setFullRepayment] = React.useState(false);
     const myName = JSON.parse(localStorage.getItem("user")).userName;
 
     const toastOptions = {
@@ -62,10 +70,10 @@ export const Loans = (props) => {
         theme: "dark",
     };
 
-    const getLenderImage = (lenderId)=>{
+    const getLenderImage = (lenderId) => {
         const lender = data.myFriends.find((friend) => friend._id === lenderId); // Use find instead of filter
-    console.log("lender: ", lender);
-    return lender ? lender.avatarImage : "";
+        console.log("lender: ", lender);
+        return lender ? lender.avatarImage : "";
     }
 
     const handleChangeLoanView = (loanType) => {
@@ -90,12 +98,12 @@ export const Loans = (props) => {
         console.log("Edit Loan:", loanId);
     };
 
-    const handleDemoteRequest = async(loanId)=>{
+    const handleDemoteRequest = async (loanId) => {
         try {
-            const responseData = await changeLoanStatus(loanId,true,false)
+            const responseData = await changeLoanStatus(loanId, true, false)
             if (responseData.success) {
                 setTimeout(() => {
-                    dispatch({ type: "updateLoanStatus", payload: loanId, demote:true })
+                    dispatch({ type: "updateLoanStatus", payload: loanId, demote: true })
                     toast.success(data.message, toastOptions);
                 }, 200)
 
@@ -105,36 +113,68 @@ export const Loans = (props) => {
         }
     }
 
-    const handleMarkRepaid = async(loanId)=>{
-        try {
-            const responseData = await changeLoanStatus(loanId,false,true)
-            if (responseData.success) {
-                setTimeout(() => {
-                    dispatch({ type: "updateLoanStatus", payload: loanId, demote:false, repayed:true })
-                    toast.success(data.message, toastOptions);
-                }, 200)
+    const handleMarkRepaid = async (loan) => {
 
+        if (loanRepayment === loan._id) {
+            const repayedAmountForLoan = loan.repaidLoanAmount + repayingAmount;
+            try {
+                const responseData = await changeLoanStatus(loan._id, false, true, repayedAmountForLoan)
+                if (responseData.success) {
+                    setTimeout(() => {
+                        dispatch({ type: "updateLoanStatus", payload:{loanId : loan._id, demote:false, repayed:true, repayedAmount : repayedAmountForLoan}})
+                        toast.success(data.message, toastOptions);
+                    }, 200)
+
+                }
+            } catch (err) {
+                console.log(err)
             }
-        } catch (err) {
-            console.log(err)
+            setRepayingAmount(0)
+            setFullRepayment(false);
+            setLoanRepayment(null)
+        } else {
+            setLoanRepayment(loan._id)
         }
+
     }
 
-    const handleMarkAsPaid = async (loanId) => {
-        console.log("inside mark as paid")
-        try {
-            const responseData = await changeLoanStatus(loanId,false,false)
-            if (responseData.success) {
-                setTimeout(() => {
-                    dispatch({ type: "updateLoanStatus", payload: loanId, demote:false })
-                    toast.success(data.message, toastOptions);
-                }, 200)
+    const handleMarkAsPaid = async (loan) => {
 
+        if (loanRepayment === loan._id) {
+            try {
+                const repayedAmountForLoan = loan.repaidLoanAmount + repayingAmount;
+                const responseData = await changeLoanStatus(loan._id, false, false, repayedAmountForLoan)
+                if (responseData.success) {
+                    setTimeout(() => {
+                        dispatch({ type: "updateLoanStatus", payload:{loanId : loan._id, demote:false, repayedAmount : repayedAmountForLoan}})
+                        dispatch({ type: "updateLoanStatus", payload: loan._id, demote: false })
+                        toast.success(data.message, toastOptions);
+                    }, 200)
+
+                }
+            } catch (err) {
+                console.log(err)
             }
-        } catch (err) {
-            console.log(err)
+            setRepayingAmount(0)
+            setFullRepayment(false)
+            setLoanRepayment(null)
+        } else {
+            setLoanRepayment(loan._id)
         }
+
+
     };
+
+    const handleRepayingAmountChange = (e, loan) => {
+        const maxRepayAmount = loan.loanAmount - loan.repaidLoanAmount;
+        const value = Math.min(e.target.value, maxRepayAmount); // Ensure value does not exceed max
+        setRepayingAmount(value);
+    }
+
+    const handleCheckBoxChange = (loan) => {
+        setRepayingAmount(loan.loanAmount - loan.repaidLoanAmount)
+        setFullRepayment((prev) => !prev)
+    }
 
     React.useEffect(() => {
         const statusOrderForBorrow = { "pending": 0, "inApproval": 1, "paid": 2 };
@@ -179,12 +219,12 @@ export const Loans = (props) => {
                         <StyledCard key={loan._id}>
                             <StyledCardHeader
                                 avatar={
-                                    <Avatar src={getLenderImage(loan.borrower)} sx={{ bgcolor: 'green'}}>
-                                        
+                                    <Avatar src={getLenderImage(loan.borrower)} sx={{ bgcolor: 'green' }}>
+
                                     </Avatar>
                                 }
                                 title={<Typography variant="h6" sx={{ fontSize: '1rem' }}>{loan.loanDescription}</Typography>}
-                                subheader={<Typography variant="body2" sx={{ fontSize: '0.875rem' }}>Amount: {loan.loanAmount}</Typography>}
+                                subheader={<Typography variant='body2' sx={{ fontSize: '0.875rem' }}>Lent to <span sx={{ color: 'red' }}>{loan.borrowerName}</span> on {new Date(loan.loanDate).toLocaleDateString()}</Typography>}
                                 action={
                                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                                         {/* {loan.loanStatus === "pending" &&
@@ -208,18 +248,18 @@ export const Loans = (props) => {
                                             </IconButton>
                                         }
 
-                                       
+
 
                                         {loan.loanStatus !== "paid" &&
                                             <IconButton
                                                 aria-label="Approve this request"
                                                 sx={{ color: 'black' }}
-                                                onClick={() => handleMarkRepaid(loan._id)}
+                                                onClick={() => handleMarkRepaid(loan)}
                                             >
                                                 <ThumbUpIcon />
                                             </IconButton>}
 
-                                            {loan.loanStatus === "inApproval" &&
+                                        {loan.loanStatus === "inApproval" &&
                                             <IconButton
                                                 aria-label="Reject this request"
                                                 sx={{ color: 'black' }}
@@ -227,14 +267,83 @@ export const Loans = (props) => {
                                             >
                                                 <ThumbDownIcon />
                                             </IconButton>}
-                                        
+
                                     </Box>
                                 }
                             />
                             <CardContent sx={{ padding: '8px' }}>
-                                <Typography variant='body2' sx={{ fontSize: '0.875rem' }}>Lent to {loan.borrowerName} on {new Date(loan.loanDate).toLocaleDateString()}</Typography>
+
                                 {/* <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>Date: {new Date(loan.loanDate).toLocaleDateString()}</Typography> */}
                                 <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>Status: {loan.loanStatus}</Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+
+                                    <LinearProgress
+                                        variant="determinate"
+                                        value={(loan.repaidLoanAmount / loan.loanAmount) * 100}
+                                        sx={{
+                                            width: "70%",
+                                            height: "8px",
+                                            backgroundColor: '#eeeeee',
+                                            "& .MuiLinearProgress-bar": {
+                                                backgroundColor: (loan.repaidLoanAmount / loan.loanAmount) * 100 < 80 ? 'red' : 'green'
+                                            },
+                                        }}
+                                    />
+                                    <Typography
+                                        variant="body2"
+                                        sx={{ fontWeight: 'bold', color: (loan.repaidLoanAmount / loan.loanAmount) * 100 > 80 ? 'error.main' : 'text.secondary', marginLeft: '8px' }}
+                                    >
+                                        {`${loan.repaidLoanAmount}/${loan.loanAmount}`}
+                                    </Typography>
+                                </Box>
+
+                                {loanRepayment === loan._id && (
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                        {/* First TextField with controlled width */}
+                                        <TextField
+                                            sx={{ width: '50%' }}
+                                            id="outlined-basic"
+                                            label="Repayed amount"
+                                            variant="outlined"
+                                            size="small"
+                                            disabled
+                                            value={loan.repaidLoanAmount}
+                                        />
+
+                                        {/* Second TextField and Checkbox side by side with label */}
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <TextField
+                                                id="outlined-basic"
+                                                label="Repaying amount"
+                                                variant="outlined"
+                                                size="small"
+                                                value={repayingAmount}
+                                                onChange={(e) => handleRepayingAmountChange(e, loan)}
+                                                disabled={fullRepayment}
+                                                type="number"
+                                                inputProps={{ max: loan.loanAmount - loan.repaidLoanAmount }}
+                                            />
+                                            <Checkbox onChange={() => handleCheckBoxChange(loan)} />
+                                            <Typography variant="body2">Full Repayment</Typography>
+                                        </Box>
+
+                                        {/* Cancel and Submit buttons aligned to the end */}
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+                                            <Button variant="outlined">Cancel</Button>
+                                            <Button variant="outlined"
+                                                onClick={() => {
+                                                    handleMarkRepaid(loan)
+                                                }
+                                                }
+                                            >Submit</Button>
+                                        </Box>
+                                    </Box>
+
+
+
+                                )
+                                }
+
                             </CardContent>
                         </StyledCard>
                     ))
@@ -250,11 +359,11 @@ export const Loans = (props) => {
                             <StyledCardHeader
                                 avatar={
                                     <Avatar src={getLenderImage(loan.lender)} sx={{ bgcolor: getAvatarColor(myName) }}>
-                                        
+
                                     </Avatar>
                                 }
                                 title={<Typography variant="h6" sx={{ fontSize: '1rem' }}>{loan.loanDescription}</Typography>}
-                                subheader={<Typography variant="body2" sx={{ fontSize: '0.875rem' }}>Amount: {loan.loanAmount}</Typography>}
+                                subheader={<Typography variant='body2' sx={{ fontSize: '0.875rem' }}>Borrowed From {loan.lenderName} on {new Date(loan.loanDate).toLocaleDateString()}</Typography>}
                                 action={
                                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                                         {/* {loan.loanStatus === "pending" &&
@@ -282,13 +391,12 @@ export const Loans = (props) => {
                                             <IconButton
                                                 aria-label="mark as paid"
                                                 onClick={() => {
-                                                    if(loan.lender){
-                                                        handleMarkAsPaid(loan._id)
+                                                    if (loan.lender) {
+                                                        handleMarkAsPaid(loan)
                                                     }
-                                                    else{
-                                                        console.log("heheheh inside markRepaid")
-                                                        handleMarkRepaid(loan._id)
-                                                    }    
+                                                    else {
+                                                        handleMarkRepaid(loan)
+                                                    }
                                                 }
                                                 }
                                                 sx={{ color: 'green' }}
@@ -318,8 +426,81 @@ export const Loans = (props) => {
                                 }
                             />
                             <CardContent sx={{ padding: '8px' }}>
-                                <Typography variant='body2' sx={{ fontSize: '0.875rem' }}>Borrowed From {loan.lenderName} on {new Date(loan.loanDate).toLocaleDateString()}</Typography>
+
                                 <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>Status: {loan.loanStatus}</Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+
+                                    <LinearProgress
+                                        variant="determinate"
+                                        value={(loan.repaidLoanAmount / loan.loanAmount) * 100}
+                                        sx={{
+                                            width: "70%",
+                                            height: "8px",
+                                            backgroundColor: '#eeeeee',
+                                            "& .MuiLinearProgress-bar": {
+                                                backgroundColor: (loan.repaidLoanAmount / loan.loanAmount) * 100 < 80 ? 'red' : 'green'
+                                            },
+                                        }}
+                                    />
+                                    <Typography
+                                        variant="body2"
+                                        sx={{ fontWeight: 'bold', color: (loan.repaidLoanAmount / loan.loanAmount) * 100 > 80 ? 'error.main' : 'text.secondary', marginLeft: '8px' }}
+                                    >
+                                        {`${loan.repaidLoanAmount}/${loan.loanAmount}`}
+                                    </Typography>
+                                </Box>
+
+                                {loanRepayment === loan._id && (
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                        {/* First TextField with controlled width */}
+                                        <TextField
+                                            sx={{ width: '50%' }}
+                                            id="outlined-basic"
+                                            label="Repayed amount"
+                                            variant="outlined"
+                                            size="small"
+                                            disabled
+                                            value={loan.repaidLoanAmount}
+                                        />
+
+                                        {/* Second TextField and Checkbox side by side with label */}
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <TextField
+                                                id="outlined-basic"
+                                                label="Repaying amount"
+                                                variant="outlined"
+                                                size="small"
+                                                value={repayingAmount}
+                                                onChange={(e) => handleRepayingAmountChange(e, loan)}
+                                                disabled={fullRepayment}
+                                                type="number"
+                                                inputProps={{ max: loan.loanAmount - loan.repaidLoanAmount }}
+                                            />
+                                            <Checkbox onChange={() => handleCheckBoxChange(loan)} />
+                                            <Typography variant="body2">Full Repayment</Typography>
+                                        </Box>
+
+                                        {/* Cancel and Submit buttons aligned to the end */}
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+                                            <Button variant="outlined">Cancel</Button>
+                                            <Button variant="outlined"
+                                                onClick={() => {
+                                                    if (loan.lender) {
+                                                        handleMarkAsPaid(loan)
+                                                    }
+                                                    else {
+                                                        handleMarkRepaid(loan)
+                                                    }
+                                                }
+                                                }
+                                            >Submit</Button>
+                                        </Box>
+                                    </Box>
+
+
+
+                                )
+                                }
                             </CardContent>
                         </StyledCard>
                     ))

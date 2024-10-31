@@ -137,14 +137,47 @@ export const appReducer = (state, action) => {
             return {
                 ...state,
                 loansLent: state.loansLent.map(loan =>
-                    loan._id === action.payload
-                        ? { ...loan, loanStatus: action.demote?"pending":action.repayed?"paid":statusFlow[loan.loanStatus] }
-                        : loan
+                 {
+                    if (loan._id === action.payload.loanId) {
+                        const updatedLoan = {
+                            ...loan,
+                            repaidLoanAmount: action.payload.repayedAmount, // Update repaid amount
+                        };
+        
+                        // Determine loanStatus based on conditions
+                        if (action.payload.repayed) {
+                            updatedLoan.loanStatus = "paid";
+                        } 
+                        if (action.payload.demote || (updatedLoan.repaidLoanAmount !== loan.loanAmount)) {
+                            updatedLoan.loanStatus = "pending";
+                        }
+        
+                        return updatedLoan;
+                    }
+                    return loan;
+                 }
                 ),
                 loansBorrowed: state.loansBorrowed.map(loan =>
-                    loan._id === action.payload
-                        ? { ...loan, loanStatus: action.repayed?"paid":statusFlow[loan.loanStatus] }
-                        : loan
+                {
+                    if (loan._id === action.payload.loanId) {
+                        const updatedLoan = {
+                            ...loan,
+                            repaidLoanAmount: action.payload.repayedAmount, // Update repaid amount
+                        };
+        
+                        // Determine loanStatus based on conditions
+                        if (action.payload.repayed) {
+                            updatedLoan.loanStatus = "paid";
+                        } else if (action.payload.demote || updatedLoan.repaidLoanAmount !== loan.loanAmount) {
+                            updatedLoan.loanStatus = "pending";
+                        }else{
+                            updatedLoan.loanStatus = "inApproval";
+                        }
+        
+                        return updatedLoan;
+                    }
+                    return loan;
+                }
                 )
             };
 

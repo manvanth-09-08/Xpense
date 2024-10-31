@@ -127,10 +127,10 @@ export const deleteLoan = async(loanId,lender,borrower)=>{
     }
 }
 
-export const changeLoanStatus = async(loanId,demote,repayed)=>{
+export const changeLoanStatus = async(loanId,demote,repayed,repayedAmount)=>{
     try{
         const {data} = await axios.post(changeStatus,{
-            loanId,demote,repayed
+            loanId,demote,repayed,repayedAmount
         });
         return data;
     }catch(err){

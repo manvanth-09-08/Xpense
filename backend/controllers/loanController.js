@@ -129,7 +129,7 @@ export const updateLoan = async (req, res) => {
 
 export const changeStatus = async (req, res) => {
     try {
-        const { loanId, demote, repayed } = req.body;
+        const { loanId, demote, repayed, repayedAmount } = req.body;
         const lenderName=""
         const borrowerName="";
 
@@ -159,14 +159,17 @@ export const changeStatus = async (req, res) => {
 
 
         loan.loanStatus = nextStatus;
+        loan.repaidLoanAmount = repayedAmount;
 
-        if(demote){
-            loan.loanStatus = "pending";
-        }
-
+        
         if(repayed){
             loan.loanStatus = "paid";
         }
+
+        if(demote || (loan.repaidLoanAmount!== loan.loanAmount)){
+            loan.loanStatus = "pending";
+        }
+
 
         await loan.save();
 

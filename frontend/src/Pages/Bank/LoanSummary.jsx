@@ -56,9 +56,9 @@ export const LoanSummary = () => {
 
                 // Add loan amount to person's total
                 if (isLent) {
-                    acc[personName].total += loan.loanAmount;
+                    acc[personName].total = acc[personName].total + loan.loanAmount - loan.repaidLoanAmount;
                 } else {
-                    acc[personName].total -= loan.loanAmount;
+                    acc[personName].total =  acc[personName].total - loan.loanAmount + loan.repaidLoanAmount;
                 }
             }
 

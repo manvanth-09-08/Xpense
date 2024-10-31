@@ -46,6 +46,10 @@ const loanSchema = new mongoose.Schema({
     repaidLoanAmount :{
         type:Number,
         default:0
+    },
+
+    repayDueDate :{
+        type:Date,
     }
 })
 
