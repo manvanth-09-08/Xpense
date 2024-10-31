@@ -1,5 +1,5 @@
 import axios from "axios";
-import { loginAPI, addNewBankAccount, deleteExistingAccount,getBankDetails, deleteExistingCategory, addNewCategory, updateExistingCategory, updateExistingBankDetails, addNewLoan, deleteExistingLoan, changeStatus, addNewFriend, deleteExistingFriend } from "./ApiRequest";
+import { loginAPI, addNewBankAccount, deleteExistingAccount,getBankDetails, deleteExistingCategory, addNewCategory, updateExistingCategory, updateExistingBankDetails, addNewLoan, deleteExistingLoan, changeStatus, addNewFriend, deleteExistingFriend, searchUserName } from "./ApiRequest";
 import { Category } from "../Pages/Bank/Category";
 
 export const logIn = async(email,password)=>{
@@ -162,5 +162,17 @@ export const deleteFriend = async(userId,friendId)=>{
     }catch(err){
         console.log(err)
         return err.response.data
+    }
+}
+
+
+export const getExistingUserName = async(username)=>{
+    try {
+        const response = await axios.get(searchUserName, {
+            params: { query: username }, // Use params to send the query
+        });
+        return response.data
+    } catch (error) {
+        console.error("Error fetching suggested friends:", error);
     }
 }

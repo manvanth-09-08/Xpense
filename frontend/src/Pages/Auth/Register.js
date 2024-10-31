@@ -8,13 +8,15 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { registerAPI } from "../../utils/ApiRequest";
+import { registerAPI, searchUserName } from "../../utils/ApiRequest";
 import axios from "axios";
 import { AppContext } from "../../components/Context/AppContext";
 
 const Register = () => {
   const{data,dispatch} = useContext(AppContext)
   const navigate = useNavigate();
+  const [usernameAvailable, setUsernameAvailable] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     if(localStorage.getItem('user')){
@@ -78,6 +80,26 @@ const Register = () => {
         dispatch({type:"loading",payload:false})
       }
     };
+
+    const handleUsernameChange = async (e) => {
+      const newUsername = e.target.value;
+      setValues({...values , [e.target.name]: e.target.value});
+
+      if (newUsername) {
+          try {
+              const response = await axios.get(searchUserName, {
+                params: { username: newUsername }, // Use params to send the query
+            });
+              setUsernameAvailable(response.data.available);
+              setErrorMessage(response.data.available ? '' : 'Username already taken.');
+          } catch (error) {
+              console.error('Error checking username:', error);
+          }
+      } else {
+          setUsernameAvailable(true);
+          setErrorMessage('');
+      }
+  };
 
   return (
     <>
@@ -154,13 +176,16 @@ const Register = () => {
         <h1 className="text-center">
           <AccountBalanceWalletIcon sx={{ fontSize: 40, color: "white"}}  className="text-center" />
         </h1>
-        <h1 className="text-center text-white">Welcome to Expense Management System</h1>
+        <h2 className="text-center text-white">Welcome to XPENSE : Your personal Expense manager</h2>
         <Col md={{ span: 6, offset: 3 }}>
           <h2 className="text-white text-center mt-5" >Registration</h2>
           <Form>
             <Form.Group controlId="formBasicName" className="mt-3" >
               <Form.Label className="text-white">Name</Form.Label>
-              <Form.Control type="text"  name="name" placeholder="Full name" value={values.name} onChange={handleChange} />
+              <Form.Control type="text"  name="name" placeholder="Full name" value={values.name} onChange={handleUsernameChange}   isInvalid={!!errorMessage}/>
+              <Form.Control.Feedback type="invalid">
+                {errorMessage} {/* Display the error message */}
+            </Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="formBasicEmail" className="mt-3">
               <Form.Label className="text-white">Email address</Form.Label>
@@ -178,7 +203,7 @@ const Register = () => {
                   type="submit"
                   className=" text-center mt-3 btnStyle"
                   onClick={!data.loading ? handleSubmit : null}
-                  disabled={data.loading}
+                  disabled={data.loading || !usernameAvailable}
                 >
                   {data.loading ? "Registering..." : "Signup"}
                 </Button>

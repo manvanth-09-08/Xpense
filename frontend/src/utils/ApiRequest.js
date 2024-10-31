@@ -26,3 +26,5 @@ export const addNewFriend = `${host}/api/friends/send-request`;
 export const acceptNewFriendRequest = `${host}/api/friends/accept-request`;
 export const deleteNewFriendRequest = `${host}/api/friends/reject-request`;
 export const deleteExistingFriend = `${host}/api/friends/delete-friend`;
+
+export const searchUserName = `${host}/api/friends/check-username`;

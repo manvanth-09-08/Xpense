@@ -89,12 +89,35 @@ router.get('/search', async (req, res) => {
     const query = req.query.query;
     try {
         const friends = await User.find({
-            name: { $regex: query, $options: 'i' } // Case-insensitive search
+            $or: [
+                { name: { $regex: query, $options: 'i' } },
+                { email: { $regex: query, $options: 'i' } }   
+            ] 
         }).limit(10); // Limit results to avoid excessive data
 
         res.json(friends);
     } catch (error) {
         res.status(500).json({ success:false, message: 'Error fetching friends' });
+    }
+});
+
+
+router.get('/check-username', async (req, res) => {
+    const { username } = req.query;
+
+    if (!username) {
+        return res.status(400).json({ available: true });
+    }
+
+    try {
+        const user = await User.findOne({ name:username });
+        if (user) {
+            return res.json({ available: false }); // Username exists
+        }
+        return res.json({ available: true }); // Username is available
+    } catch (error) {
+        console.error('Error checking username:', error);
+        return res.status(500).json({ available: false });
     }
 });
 
