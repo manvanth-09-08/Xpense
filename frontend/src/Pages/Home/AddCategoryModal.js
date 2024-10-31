@@ -117,7 +117,7 @@ export const AddCategoryModal = (props)=>{
     }, [localStorage.getItem("user")])
 
     useEffect(() => {
-      if (data.editValues && data.editValues.edit) {
+      if (data.addCategoryModal && data.editValues && data.editValues.edit) {
         setCategory(data.editValues.category.category);
         setBudget(data.editValues.category.budget)
       }else{
